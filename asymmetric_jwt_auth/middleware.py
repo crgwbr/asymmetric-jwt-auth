@@ -50,7 +50,7 @@ class JWTAuthMiddleware(object):
             return
 
         claim_data = None
-        for public in user.public_keys:
+        for public in user.public_keys.all():
             claim_data = token.verify(claim, public.key, validate_nonce=self.validate_nonce)
             if claim_data:
                 break
