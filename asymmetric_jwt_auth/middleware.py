@@ -58,4 +58,5 @@ class JWTAuthMiddleware(object):
             return
 
         logging.info('Successfully authenticated %s using JWT', user.username)
-        login(request, user)
+        request._dont_enforce_csrf_checks = True
+        request.user = user
