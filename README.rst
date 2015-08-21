@@ -7,8 +7,8 @@ Asymmetric JWT Authentication
 .. image:: https://img.shields.io/pypi/dm/asymmetric_jwt_auth.svg
         :target: https://pypi.python.org/pypi/asymmetric_jwt_auth
 
-.. image:: https://ci.gitlab.com/projects/6313/status.png?ref=master
-   :target: https://ci.gitlab.com/projects/6313?ref=master
+.. image:: https://travis-ci.org/crgwbr/asymmetric_jwt_auth.svg
+    :target: https://travis-ci.org/crgwbr/asymmetric_jwt_auth
 
 What?
 -----
