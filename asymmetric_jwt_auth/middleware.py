@@ -1,6 +1,6 @@
-from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.core.cache import cache
+from asymmetric_jwt_auth import AUTH_METHOD
 import asymmetric_jwt_auth.token as token
 import logging
 
@@ -8,8 +8,6 @@ logger = logging.getLogger(__name__)
 
 
 class JWTAuthMiddleware(object):
-    METHOD = 'JWT'
-
     def create_nonce_key(self, username, iat):
         """Create the cache key for storing nonces"""
         return '%s-nonces-%s-%s' % (
@@ -37,7 +35,7 @@ class JWTAuthMiddleware(object):
             return
 
         method, claim = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
-        if method.upper() != self.METHOD:
+        if method.upper() != AUTH_METHOD:
             return
 
         username = token.get_claimed_username(claim)
