@@ -37,8 +37,7 @@ def verify(token, public_key, validate_nonce=None, algorithms=[DEFAULT_ALGORITHM
     """Verify the validity of the given JWT using a public key"""
     try:
         token_data = jwt.decode(token, public_key, algorithms=algorithms)
-    except jwt.InvalidTokenError, e:
-        print e
+    except jwt.InvalidTokenError as e:
         logger.info('JWT failed verification', exc_info=e)
         return False
 

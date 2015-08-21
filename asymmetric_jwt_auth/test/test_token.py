@@ -21,8 +21,8 @@ class AuthTest(unittest.TestCase):
         )
         public = private.public_key()
 
-        pem_private = private.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption())
-        pem_public = public.public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
+        pem_private = private.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption()).decode("ascii")
+        pem_public = public.public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo).decode("ascii")
         return pem_private, pem_public
 
     def test_roundtrip(self):
