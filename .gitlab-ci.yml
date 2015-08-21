@@ -1,0 +1,15 @@
+image: python:latest
+
+stages:
+  - build
+  - test
+
+install_deps:
+  stage: build
+  script:
+    - pip install -r requirements.txt
+
+run_unittests:
+  stage: test
+  script:
+    - python -m unittest discover
