@@ -1,13 +1,11 @@
 image: python:latest
 
+before_script:
+  - pip install -r requirements.txt
+
 stages:
   - build
   - test
-
-install_deps:
-  stage: build
-  script:
-    - pip install -r requirements.txt
 
 run_unittests:
   stage: test
