@@ -1,5 +1,7 @@
 # Asymmetric JWT Authentication
 
+[![build status](https://ci.gitlab.com/projects/6313/status.png?ref=master)](https://ci.gitlab.com/projects/6313?ref=master)
+
 ## What?
 
 This is an library designed to handle authentication in *server-to-server* API requests. It accomplishes this using RSA public / private key pairs.
