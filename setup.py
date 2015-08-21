@@ -17,7 +17,7 @@ setup(
     name='asymmetric_jwt_auth',
     version='0.1.2',
     description='Asymmetric key based authentication for HTTP APIs',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     author='Craig Weber',
     author_email='crgwbr@gmail.com',
     url='https://github.com/crgwbr/asymmetric_jwt_auth',
