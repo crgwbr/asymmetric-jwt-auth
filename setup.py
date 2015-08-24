@@ -15,7 +15,7 @@ requires = [
 
 setup(
     name='asymmetric_jwt_auth',
-    version='0.1.4',
+    version='0.1.5',
     description='Asymmetric key based authentication for HTTP APIs',
     long_description=open('README.rst').read(),
     author='Craig Weber',
