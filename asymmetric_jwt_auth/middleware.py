@@ -31,7 +31,7 @@ class JWTAuthMiddleware(object):
 
 
     def process_request(self, request):
-        if not request.META.has_key('HTTP_AUTHORIZATION'):
+        if 'HTTP_AUTHORIZATION' not in request.META:
             return
 
         method, claim = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
