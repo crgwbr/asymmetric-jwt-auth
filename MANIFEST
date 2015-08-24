@@ -11,6 +11,8 @@ asymmetric_jwt_auth/token.py
 asymmetric_jwt_auth/management/__init__.py
 asymmetric_jwt_auth/management/commands/__init__.py
 asymmetric_jwt_auth/management/commands/generate_key_pair.py
+asymmetric_jwt_auth/migrations/0001_initial.py
+asymmetric_jwt_auth/migrations/__init__.py
 asymmetric_jwt_auth/test/__init__.py
 asymmetric_jwt_auth/test/test_headers.py
 asymmetric_jwt_auth/test/test_token.py
