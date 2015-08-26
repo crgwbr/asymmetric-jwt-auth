@@ -64,3 +64,8 @@ class AuthTest(unittest.TestCase):
         t = token.sign('guido', private, generate_nonce=lambda username, iat: 2)
         token_data = token.verify(t, public, validate_nonce=lambda username, iat, nonce: nonce == 1)
         self.assertFalse(token_data)
+
+    def test_get_claimed_username(self):
+        private, public = generate_key_pair()
+        t = token.sign('guido', private)
+        self.assertEqual(token.get_claimed_username(t), 'guido')

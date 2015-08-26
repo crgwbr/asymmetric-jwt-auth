@@ -27,7 +27,10 @@ def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT
 
 
 def get_claimed_username(token):
-    unverified_data = jwt.decode(token, verify=False)
+    unverified_data = jwt.decode(token, options={
+        'verify_signature': False
+    })
+
     if 'username' not in unverified_data:
         return None
     return unverified_data['username']
