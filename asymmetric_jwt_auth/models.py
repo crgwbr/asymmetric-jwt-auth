@@ -2,15 +2,24 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from cryptography.hazmat.primitives.serialization import load_ssh_public_key
+from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
 from cryptography.hazmat.backends import default_backend
 
 
 def validate_public_key(value):
-    try:
-        load_ssh_public_key(value.encode('utf-8'), default_backend())
-    except Exception as e:
-        raise ValidationError('Public key is invalid: %s' % e)
+    is_valid = False
+    exc = None
+
+    for load in (load_pem_public_key, load_ssh_public_key):
+        if not is_valid:
+            try:
+                load(value.encode('utf-8'), default_backend())
+                is_valid = True
+            except Exception as e:
+                exc = e
+
+    if not is_valid:
+        raise ValidationError('Public key is invalid: %s' % exc)
 
 
 class PublicKey(models.Model):
