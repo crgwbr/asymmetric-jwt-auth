@@ -5,6 +5,7 @@ requirements.txt
 setup.py
 asymmetric_jwt_auth/__init__.py
 asymmetric_jwt_auth/admin.py
+asymmetric_jwt_auth/apps.py
 asymmetric_jwt_auth/middleware.py
 asymmetric_jwt_auth/models.py
 asymmetric_jwt_auth/token.py
@@ -12,7 +13,10 @@ asymmetric_jwt_auth/management/__init__.py
 asymmetric_jwt_auth/management/commands/__init__.py
 asymmetric_jwt_auth/management/commands/generate_key_pair.py
 asymmetric_jwt_auth/migrations/0001_initial.py
+asymmetric_jwt_auth/migrations/0002_publickey_comment.py
+asymmetric_jwt_auth/migrations/0003_auto_20151112_1547.py
 asymmetric_jwt_auth/migrations/__init__.py
 asymmetric_jwt_auth/test/__init__.py
 asymmetric_jwt_auth/test/test_headers.py
 asymmetric_jwt_auth/test/test_token.py
+asymmetric_jwt_auth/test/test_utils.py
