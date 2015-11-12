@@ -11,6 +11,9 @@ import os.path
 import asymmetric_jwt_auth.token as token
 
 
+default_app_config = 'asymmetric_jwt_auth.apps.JWTAuthConfig'
+
+
 AUTH_METHOD = 'JWT'
 ENCODING = 'utf-8'
 
