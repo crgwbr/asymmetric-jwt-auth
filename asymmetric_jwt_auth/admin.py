@@ -6,6 +6,4 @@ from asymmetric_jwt_auth.models import PublicKey
 
 @admin.register(models.PublicKey)
 class PublicKeyAdmin(admin.ModelAdmin):
-    list_display = ['user']
-
-
+    list_display = ['user', 'comment']
