@@ -1,6 +1,6 @@
 cffi==1.1.2
 cryptography==1.0
-enum34==1.0.4
+enum34==1.0.4;python_version<"3.4"
 idna==2.0
 ipaddress==1.0.14
 pyasn1==0.1.8
