@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from asymmetric_jwt_auth import AUTH_METHOD
 import asymmetric_jwt_auth.token as token
@@ -42,6 +42,7 @@ class JWTAuthMiddleware(object):
         if not username:
             return
 
+        User = get_user_model()
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
