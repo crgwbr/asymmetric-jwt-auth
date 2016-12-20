@@ -24,7 +24,7 @@ def read(fname):
 
 setup(
     name='asymmetric_jwt_auth',
-    version='0.2.2',
+    version='0.2.3',
     description='Asymmetric key based authentication for HTTP APIs',
     long_description=read(fpath('README.rst')),
     author='Craig Weber',
