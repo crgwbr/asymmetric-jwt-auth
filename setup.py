@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+from setuptools import setup
 import codecs
 import os.path
-from distutils.core import setup
 
 packages = [
     'asymmetric_jwt_auth',
