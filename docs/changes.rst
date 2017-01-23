@@ -1,9 +1,11 @@
 Change Log
 ==========
 
-0.2.5
+0.3.0
 -----
-- Improve documentation
+- Improve `documentation <https://asymmetric-jwt-auth.readthedocs.io/en/latest/>`_.
+- Drop support for Python 3.3.
+- Upgrade dependency versions.
 
 
 0.2.4
