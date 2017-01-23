@@ -9,7 +9,10 @@ Distribution().fetch_build_eggs('versiontag>=1.2.0')
 from versiontag import get_version, cache_git_tag  # NOQA
 
 
-packages = find_packages()
+packages = find_packages(exclude=(
+    'sandbox',
+    'sandbox.*',
+))
 
 install_requires = [
     'PyJWT>=1.4.2',
