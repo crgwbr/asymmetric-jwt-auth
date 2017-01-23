@@ -10,4 +10,5 @@ stages:
 run_unittests:
   stage: test
   script:
+    - flake8
     - python sandbox/manage.py test

@@ -1,5 +1,4 @@
 import unittest
-import time
 import os.path
 from asymmetric_jwt_auth import create_auth_header, generate_key_pair
 from asymmetric_jwt_auth.token import verify

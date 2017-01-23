@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../sandbox/'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings'
-import django
+import django  # NOQA
 django.setup()
 
 
@@ -64,7 +64,7 @@ author = 'Craig Weber <crgwbr@gmail.com>'
 # built documents.
 #
 # The short X.Y version.
-from versiontag import get_version
+from versiontag import get_version  # NOQA
 version = get_version(pypi=True)
 # The full version, including alpha/beta/rc tags.
 release = get_version(pypi=True)
@@ -93,7 +93,7 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-import sphinx_rtd_theme
+import sphinx_rtd_theme  # NOQA
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 

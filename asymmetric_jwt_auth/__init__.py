@@ -22,11 +22,17 @@ def generate_key_pair(size=2048, public_exponent=65537, as_string=True):
     """
     Generate a public/private key pair.
 
-    :param size: Optional. Describes how many bits long the key should be, larger keys provide more security, currently 1024 and below are considered breakable, and 2048 or 4096 are reasonable default key sizes for new keys. Defaults to 2048.
-    :param public_exponent: Optional. Indicates what one mathematical property of the key generation will be. 65537 is the default and should almost always be used.
-    :param as_string: Optional. If True, return tuple of strings. If false, return tuple of RSA key objects. Defaults to True.
+    :param size: Optional. Describes how many bits long the key should be, larger keys provide more security,
+        currently 1024 and below are considered breakable, and 2048 or 4096 are reasonable default
+        key sizes for new keys. Defaults to 2048.
+    :param public_exponent: Optional. Indicates what one mathematical property of the key generation will be.
+        65537 is the default and should almost always be used.
+    :param as_string: Optional. If True, return tuple of strings. If false, return tuple of RSA key objects.
+        Defaults to True.
     :return: (PrivateKey<string>, PublicKey<string>)
-    :return: (`RSAPrivateKey <https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey>`_, `RSAPublicKey <https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey>`_)
+    :return: (
+        `RSAPrivateKey <https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey>`_,
+        `RSAPublicKey <https://cryptography.io/en/latest/hazmat/primitives/asymmetric/rsa/#cryptography.hazmat.primitives.asymmetric.rsa.RSAPublicKey>`_)
     """
     private = rsa.generate_private_key(
         public_exponent=public_exponent,

@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
 from cryptography.hazmat.backends import default_backend

@@ -6,7 +6,7 @@ import os.path
 # Make sure versiontag exists before going any further
 Distribution().fetch_build_eggs('versiontag>=1.2.0')
 
-from versiontag import get_version, cache_git_tag
+from versiontag import get_version, cache_git_tag  # NOQA
 
 
 packages = find_packages()
@@ -25,6 +25,8 @@ def fpath(name):
 def read(fname):
     return codecs.open(fpath(fname), encoding='utf-8').read()
 
+
+cache_git_tag()
 
 setup(
     name='asymmetric_jwt_auth',

@@ -9,4 +9,6 @@ python:
 install:
   - pip install -e .
 
-script: python sandbox/manage.py test
+script:
+  - flake8
+  - python sandbox/manage.py test

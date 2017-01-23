@@ -19,14 +19,17 @@ def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT
 
     :param username: Username (string) to authenticate as on the remote system.
     :param private_key: Private key to use to sign the JWT claim.
-    :param generate_nonce: Optional. Callable to use to generate a new nonce. Defaults to `random.random <https://docs.python.org/3/library/random.html#random.random>`_.
-    :param iat: Optional. Timestamp to include in the JWT claim. Defaults to `time.time <https://docs.python.org/3/library/time.html#time.time>`_.
-    :param algorithm: Optional. Algorithm to use to sign the JWT claim. Default to ``RS512``. See `pyjwt.readthedocs.io <https://pyjwt.readthedocs.io/en/latest/algorithms.html>`_ for other possible algorithms.
+    :param generate_nonce: Optional. Callable to use to generate a new nonce. Defaults to
+        `random.random <https://docs.python.org/3/library/random.html#random.random>`_.
+    :param iat: Optional. Timestamp to include in the JWT claim. Defaults to
+        `time.time <https://docs.python.org/3/library/time.html#time.time>`_.
+    :param algorithm: Optional. Algorithm to use to sign the JWT claim. Default to ``RS512``.
+        See `pyjwt.readthedocs.io <https://pyjwt.readthedocs.io/en/latest/algorithms.html>`_ for other possible algorithms.
     :return: JWT claim as a string.
     """
     iat = iat if iat else time.time()
     if not generate_nonce:
-        generate_nonce = lambda username, iat: random.random()
+        generate_nonce = lambda username, iat: random.random()  # NOQA
 
     token_data = {
         'username': username,
