@@ -8,8 +8,16 @@ logger = logging.getLogger(__name__)
 
 
 class JWTAuthMiddleware(object):
+    """Django middleware class for authenticating users using JWT Authentication headers"""
+
     def create_nonce_key(self, username, iat):
-        """Create the cache key for storing nonces"""
+        """
+        Create and return the cache key for storing nonces
+
+        :param username: Username as a string.
+        :param iat: Unix timestamp float or integer of when the nonce was used.
+        :return: Cache key string.
+        """
         return '%s-nonces-%s-%s' % (
             self.__class__.__name__,
             username,
@@ -18,6 +26,16 @@ class JWTAuthMiddleware(object):
 
 
     def log_used_nonce(self, username, iat, nonce):
+        """
+        Log a nonce as being used, and therefore henceforth invalid.
+
+        :param username: Username as a string.
+        :param iat: Unix timestamp float or integer of when the nonce was used.
+        :param nonce: Nonce value.
+        """
+        # TODO: Figure out some way to do this in a thread-safe manner. It'd be better to use
+        # a Redis Set or something, but we don't necessarily want to be tightly coupled to
+        # Redis either since not everyone uses it.
         key = self.create_nonce_key(username, iat)
         used = cache.get(key, [])
         used.append(nonce)
@@ -25,12 +43,29 @@ class JWTAuthMiddleware(object):
 
 
     def validate_nonce(self, username, iat, nonce):
+        """
+        Confirm that the given nonce hasn't already been used.
+
+        :param username: Username as a string.
+        :param iat: Unix timestamp float or integer of when the nonce was used.
+        :param nonce: Nonce value.
+        :return: True if nonce is valid, False if it is invalid.
+        """
         key = self.create_nonce_key(username, iat)
         used = cache.get(key, [])
         return nonce not in used
 
 
     def process_request(self, request):
+        """
+        Process a Django request and authenticate users.
+
+        If a JWT authentication header is detected and it is determined to be valid, the user is set as
+        ``request.user`` and CSRF protection is disabled (``request._dont_enforce_csrf_checks = True``) on
+        the request.
+
+        :param request: Django Request instance
+        """
         if 'HTTP_AUTHORIZATION' not in request.META:
             return
 

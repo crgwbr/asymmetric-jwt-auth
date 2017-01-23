@@ -10,12 +10,14 @@ Asymmetric JWT Authentication
 .. image:: https://travis-ci.org/crgwbr/asymmetric_jwt_auth.svg
     :target: https://travis-ci.org/crgwbr/asymmetric_jwt_auth
 
+
 What?
 -----
 
 This is an library designed to handle authentication in
 *server-to-server* API requests. It accomplishes this using RSA public /
 private key pairs.
+
 
 Why?
 ----
@@ -26,6 +28,7 @@ applications. In these scenarios, since the password doesn’t need to be
 memorable by a user, we can use something far more secure: asymmetric
 key cryptography. This has the advantage that a password is never
 actually sent to the server.
+
 
 How?
 ----
@@ -71,65 +74,4 @@ with or re-used. Every other part of the request is still vulnerable to
 tamper. Therefore, this is not a replacement for using SSL in the
 transport layer.
 
-Usage
------
-
-Most all of the complexity described above is handled for you.
-Implementation is very easy.
-
-Django Server Installation:
----------------------------
-
-1. Install the library: ``pip install asymmetric_jwt_auth``
-2. Add ``asymmetric_jwt_auth`` to the list of ``INSTALLED_APPS`` in
-   ``settings.py``
-3. Add ``asymmetric_jwt_auth.middleware.JWTAuthMiddleware`` to the list
-   of ``MIDDLEWARE_CLASSES`` in ``settings.py``
-4. Create the new models in your DB: ``python manage.py migrate``
-
-This creates a new relationship on the
-``django.contrib.auth.models.User`` model: ``User`` now conains a
-one-to-many relationship to ``asymmetric_jwt_auth.models.PublicKey``.
-Any number of public key’s can be added to a user using the Django Admin
-site.
-
-The middleware activated above will watch for incoming requests with a
-JWT authorization header and will attempt to authenticate it using saved
-public keys.
-
-Client Usage
-------------
-
-Here’s an example of making a request to a server using the JWT auth and
-the `requests`_ HTTP client library.
-
-::
-
-    from asymmetric_jwt_auth import create_auth_header
-    import requests
-
-    auth = create_auth_header(
-        username='crgwbr',        # This is the user to authenticate as on the server
-        key_file='~/.ssh/id_rsa') # This is the local path to the file containing our RSA private key
-
-    r = requests.get('http://example.com/api/endpoint/', headers={
-        'Authorization': auth
-    })
-
-This method also supports using an encrypted private key.
-
-::
-
-    from asymmetric_jwt_auth import create_auth_header
-    import requests
-
-    auth = create_auth_header(
-        username='crgwbr',
-        key_file='~/.ssh/id_rsa',
-        key_password='somepassphrase')
-
-    r = requests.get('http://example.com/api/endpoint/', headers={
-        'Authorization': auth
-    })
-
-.. _requests: http://www.python-requests.org/
+**Full Documentation**: https://asymmetric-jwt-auth.readthedocs.io

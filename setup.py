@@ -1,36 +1,59 @@
 #!/usr/bin/env python
-from setuptools import setup
+from setuptools import setup, find_packages, Distribution
 import codecs
 import os.path
 
-packages = [
-    'asymmetric_jwt_auth',
-    'asymmetric_jwt_auth.test',
-    'asymmetric_jwt_auth.management',
-    'asymmetric_jwt_auth.management.commands',
-    'asymmetric_jwt_auth.migrations',
+# Make sure versiontag exists before going any further
+Distribution().fetch_build_eggs('versiontag>=1.2.0')
+
+from versiontag import get_version, cache_git_tag
+
+
+packages = find_packages()
+
+install_requires = [
+    'PyJWT>=1.4.2',
+    'cryptography>=1.7.1',
+    'Django>=1.8.0',
 ]
 
-requires = [
-    'PyJWT>=1.4.0',
-    'cryptography>=1.0',
-]
 
 def fpath(name):
     return os.path.join(os.path.dirname(__file__), name)
 
+
 def read(fname):
     return codecs.open(fpath(fname), encoding='utf-8').read()
 
+
 setup(
     name='asymmetric_jwt_auth',
-    version='0.2.4',
     description='Asymmetric key based authentication for HTTP APIs',
+    version=get_version(pypi=True),
     long_description=read(fpath('README.rst')),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Framework :: Django',
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: ISC License (ISCL)',
+        'Operating System :: Unix',
+        'Operating System :: MacOS :: MacOS X',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+    ],
     author='Craig Weber',
     author_email='crgwbr@gmail.com',
-    url='https://github.com/crgwbr/asymmetric_jwt_auth',
+    url='https://github.com/crgwbr/asymmetric-jwt-auth',
     packages=packages,
-    install_requires=requires,
+    install_requires=install_requires,
     license='LICENSE.md'
 )

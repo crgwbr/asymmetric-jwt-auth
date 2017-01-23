@@ -1,7 +1,7 @@
 image: python:latest
 
 before_script:
-  - pip install -r requirements.txt
+  - pip install -e .
 
 stages:
   - build
@@ -10,4 +10,4 @@ stages:
 run_unittests:
   stage: test
   script:
-    - python -m unittest discover
+    - python sandbox/manage.py test
