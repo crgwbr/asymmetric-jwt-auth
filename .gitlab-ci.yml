@@ -1,6 +1,7 @@
 image: python:latest
 
 before_script:
+  - pip install -r requirements.txt
   - pip install -e .
 
 stages:
