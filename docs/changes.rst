@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.3.1
+-----
+- Made logging quieter by reducing severity of unimportant messages
+
+
 0.3.0
 -----
 - Improve `documentation <https://asymmetric-jwt-auth.readthedocs.io/en/latest/>`_.
