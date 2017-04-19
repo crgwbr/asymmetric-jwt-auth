@@ -91,6 +91,6 @@ class JWTAuthMiddleware(object):
         if not claim_data:
             return
 
-        logging.info('Successfully authenticated %s using JWT', user.username)
+        logger.debug('Successfully authenticated %s using JWT', user.username)
         request._dont_enforce_csrf_checks = True
         request.user = user

@@ -69,8 +69,8 @@ def verify(token, public_key, validate_nonce=None, algorithms=[DEFAULT_ALGORITHM
     """
     try:
         token_data = jwt.decode(token, public_key, algorithms=algorithms)
-    except jwt.InvalidTokenError as e:
-        logger.info('JWT failed verification', exc_info=e)
+    except jwt.InvalidTokenError:
+        logger.debug('JWT failed verification')
         return False
 
     claimed_username = token_data.get('username')
@@ -81,13 +81,13 @@ def verify(token, public_key, validate_nonce=None, algorithms=[DEFAULT_ALGORITHM
     current_time = time.time()
     min_time, max_time = (current_time - TIMESTAMP_TOLERANCE, current_time + TIMESTAMP_TOLERANCE)
     if claimed_time < min_time or claimed_time > max_time:
-        logger.info('Claimed time is outside of allowable tolerances')
+        logger.debug('Claimed time is outside of allowable tolerances')
         return False
 
     # Ensure nonce is unique
     if validate_nonce:
         if not validate_nonce(claimed_username, claimed_time, claimed_nonce):
-            logger.info('Claimed nonce failed to validate')
+            logger.debug('Claimed nonce failed to validate')
             return False
     else:
         logger.warning('validate_nonce function was not supplied!')
