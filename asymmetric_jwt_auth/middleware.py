@@ -1,3 +1,4 @@
+from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from asymmetric_jwt_auth import AUTH_METHOD
@@ -7,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class JWTAuthMiddleware(object):
+class JWTAuthMiddleware(MiddlewareMixin):
     """Django middleware class for authenticating users using JWT Authentication headers"""
 
     def create_nonce_key(self, username, iat):
