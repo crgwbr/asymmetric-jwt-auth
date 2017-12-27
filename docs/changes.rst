@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.4.1
+-----
+- Fix middleware in Django 2.0.
+
 0.4.0
 -----
 - Add support for Django 2.0.
