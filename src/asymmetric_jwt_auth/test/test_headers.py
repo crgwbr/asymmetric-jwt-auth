@@ -5,10 +5,10 @@ from asymmetric_jwt_auth.token import verify
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 
-KEY1_PRIVATE = os.path.join(BASE, 'dummy')
+KEY1_PRIVATE = os.path.join(BASE, 'dummy.privkey')
 KEY1_PUBLIC = os.path.join(BASE, 'dummy.pub')
 
-KEY2_PRIVATE = os.path.join(BASE, 'dummy_encrypted')
+KEY2_PRIVATE = os.path.join(BASE, 'dummy_encrypted.privkey')
 KEY2_PUBLIC = os.path.join(BASE, 'dummy_encrypted.pub')
 KEY2_PASSWORD = b'password'
 

@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.4.0
+-----
+- Add support for Django 2.0.
+- Drop support for Django 1.8, 1.9, and 1.10.
+
 0.3.1
 -----
 - Made logging quieter by reducing severity of unimportant messages

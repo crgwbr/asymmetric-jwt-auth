@@ -9,16 +9,21 @@ Distribution().fetch_build_eggs('versiontag>=1.2.0')
 from versiontag import get_version, cache_git_tag  # NOQA
 
 
-packages = find_packages(exclude=(
-    'sandbox',
-    'sandbox.*',
-))
+packages = find_packages('src')
 
 install_requires = [
     'PyJWT>=1.4.2',
     'cryptography>=1.7.1',
-    'Django>=1.8.0',
+    'Django>=1.11.0',
 ]
+
+extras_require = {
+    'development': [
+        'flake8>=3.2.1',
+        'sphinx>=1.5.2',
+        'versiontag>=1.2.0',
+    ],
+}
 
 
 def fpath(name):
@@ -40,16 +45,13 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.9',
-        'Framework :: Django :: 1.10',
+        'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Operating System :: Unix',
         'Operating System :: MacOS :: MacOS X',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -58,7 +60,10 @@ setup(
     author='Craig Weber',
     author_email='crgwbr@gmail.com',
     url='https://github.com/crgwbr/asymmetric-jwt-auth',
+    license='ISC',
+    package_dir={'': 'src'},
     packages=packages,
+    include_package_data=True,
     install_requires=install_requires,
-    license='LICENSE.md'
+    extras_require=extras_require
 )

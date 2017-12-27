@@ -1,15 +1,25 @@
-image: python:latest
-
-before_script:
-  - pip install -r requirements.txt
-  - pip install -e .
-
 stages:
-  - build
   - test
 
-run_unittests:
+cache:
+  key: "$CI_PROJECT_NAME"
+  paths:
+    - $HOME/.cache/pip
+
+before_script:
+  - pip install tox
+
+test_python34:
   stage: test
-  script:
-    - flake8
-    - python sandbox/manage.py test
+  image: python:3.4
+  script: tox --skip-missing-interpreters
+
+test_python35:
+  stage: test
+  image: python:3.5
+  script: tox --skip-missing-interpreters
+
+test_python36:
+  stage: test
+  image: python:3.6
+  script: tox --skip-missing-interpreters

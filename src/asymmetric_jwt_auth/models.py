@@ -33,7 +33,7 @@ class PublicKey(models.Model):
     """
 
     #: Foreign key to the Django User model. Related name: ``public_keys``.
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='public_keys')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='public_keys', on_delete=models.CASCADE)
 
     #: Key text in either PEM or OpenSSH format.
     key = models.TextField(help_text="The user's RSA public key", validators=[validate_public_key])

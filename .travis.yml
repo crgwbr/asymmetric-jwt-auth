@@ -1,15 +1,11 @@
 language: python
 python:
-  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
-  - "3.6-dev"
 
 install:
-  - pip install -r requirements.txt
-  - pip install -e .
+  - pip install tox
 
 script:
-  - flake8
-  - python sandbox/manage.py test
+  - tox --skip-missing-interpreters
