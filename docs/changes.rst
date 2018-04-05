@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.4.2
+-----
+- Fix performance of Django Admin view when adding/changing a public key on a site with many users.
+
 0.4.1
 -----
 - Fix middleware in Django 2.0.
