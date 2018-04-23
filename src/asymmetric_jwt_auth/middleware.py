@@ -70,7 +70,11 @@ class JWTAuthMiddleware(MiddlewareMixin):
         if 'HTTP_AUTHORIZATION' not in request.META:
             return
 
-        method, claim = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+        try:
+            method, claim = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+        except ValueError:
+            return
+
         if method.upper() != AUTH_METHOD:
             return
 
