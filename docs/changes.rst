@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.4.3
+-----
+- Fix exception thrown by middleware when processing a request with a malformed Authorization header.
+
 0.4.2
 -----
 - Fix performance of Django Admin view when adding/changing a public key on a site with many users.
