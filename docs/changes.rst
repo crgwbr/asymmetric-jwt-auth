@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.4.4
+-----
+- Add support for Django 2.1, 2.2.
+- Add support for Python 3.7.
+
 0.4.3
 -----
 - Fix exception thrown by middleware when processing a request with a malformed Authorization header.
