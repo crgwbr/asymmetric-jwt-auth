@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
 from cryptography.hazmat.backends import default_backend
@@ -41,9 +42,17 @@ class PublicKey(models.Model):
     #: Comment describing the key. Use this to note what system is authenticating with the key, when it was last rotated, etc.
     comment = models.CharField(max_length=100, help_text="Comment describing this key", blank=True)
 
+    #: Date and time that key was last used for authenticating a request.
+    last_used_on = models.DateTimeField("Last Used On", null=True, blank=True)
+
+
+    def update_last_used_datetime(self):
+        self.last_used_on = timezone.now()
+        self.save(update_fields=["last_used_on"])
+
+
     def save(self, *args, **kwargs):
         key_parts = self.key.split(' ')
         if len(key_parts) == 3 and not self.comment:
             self.comment = key_parts.pop()
-
         super(PublicKey, self).save(*args, **kwargs)

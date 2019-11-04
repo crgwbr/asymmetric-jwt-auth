@@ -1,16 +1,18 @@
-import unittest
-import time
+from django.test import TestCase
 from asymmetric_jwt_auth import generate_key_pair
 import asymmetric_jwt_auth.token as token
+import time
 
 
-class AuthTest(unittest.TestCase):
+class AuthTest(TestCase):
+
     def test_roundtrip(self):
         private, public = generate_key_pair()
         t = token.sign('guido', private)
         token_data = token.verify(t, public)
         self.assertTrue(token_data)
         self.assertEqual(token_data.get('username'), 'guido')
+
 
     def test_bad_keys(self):
         private1, public1 = generate_key_pair()
@@ -32,6 +34,7 @@ class AuthTest(unittest.TestCase):
         token_data = token.verify(t, public1)
         self.assertFalse(token_data)
 
+
     def test_bad_iat(self):
         private, public = generate_key_pair()
 
@@ -50,6 +53,7 @@ class AuthTest(unittest.TestCase):
         token_data = token.verify(t, public)
         self.assertFalse(token_data)
 
+
     def test_bad_nonce(self):
         private, public = generate_key_pair()
 
@@ -64,6 +68,7 @@ class AuthTest(unittest.TestCase):
         t = token.sign('guido', private, generate_nonce=lambda username, iat: 2)
         token_data = token.verify(t, public, validate_nonce=lambda username, iat, nonce: nonce == 1)
         self.assertFalse(token_data)
+
 
     def test_get_claimed_username(self):
         private, public = generate_key_pair()

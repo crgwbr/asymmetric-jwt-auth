@@ -1,8 +1,8 @@
-import unittest
+from django.test import TestCase
 import asymmetric_jwt_auth as auth
 
 
-class UtilsTest(unittest.TestCase):
+class UtilsTest(TestCase):
     def test_generate_new_key(self):
         private, public = auth.generate_key_pair()
 
