@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.5.0
+-----
+- Add new ``PublicKey.last_used_on`` field
+
 0.4.3
 -----
 - Fix exception thrown by middleware when processing a request with a malformed Authorization header.
