@@ -9,11 +9,6 @@ cache:
 before_script:
   - pip install tox
 
-test_python36:
-  stage: test
-  image: python:3.6
-  script: tox --skip-missing-interpreters
-
 test_python37:
   stage: test
   image: python:3.7
@@ -22,4 +17,9 @@ test_python37:
 test_python38:
   stage: test
   image: python:3.8
+  script: tox --skip-missing-interpreters
+
+test_python39:
+  stage: test
+  image: python:3.9
   script: tox --skip-missing-interpreters
