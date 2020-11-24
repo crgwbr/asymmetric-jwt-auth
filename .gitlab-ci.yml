@@ -9,17 +9,13 @@ cache:
 before_script:
   - pip install tox
 
-test_python37:
+test:
   stage: test
-  image: python:3.7
+  image: $IMAGE
   script: tox --skip-missing-interpreters
-
-test_python38:
-  stage: test
-  image: python:3.8
-  script: tox --skip-missing-interpreters
-
-test_python39:
-  stage: test
-  image: python:3.9
-  script: tox --skip-missing-interpreters
+  parallel:
+    matrix:
+      - IMAGE:
+          - python:3.7
+          - python:3.8
+          - python:3.9

@@ -14,7 +14,7 @@ packages = find_packages('src')
 install_requires = [
     'PyJWT>=1.4.2',
     'cryptography>=1.7.1',
-    'Django>=1.11.0',
+    'Django>=2.2',
 ]
 
 extras_require = {
@@ -45,8 +45,6 @@ setup(
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: ISC License (ISCL)',
         'Operating System :: Unix',
