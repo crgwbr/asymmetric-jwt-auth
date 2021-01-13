@@ -1,5 +1,5 @@
 PyJWT==1.7.1
-cryptography==2.6.1
+cryptography==3.2
 Django==2.2.1
 flake8==3.7.7
 sphinx==2.0.1
