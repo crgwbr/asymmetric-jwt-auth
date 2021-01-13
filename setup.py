@@ -12,7 +12,7 @@ from versiontag import get_version, cache_git_tag  # NOQA
 packages = find_packages('src')
 
 install_requires = [
-    'PyJWT>=1.4.2',
+    'PyJWT>=1.4.2,<2.0.0',
     'cryptography>=1.7.1',
     'Django>=2.2',
 ]
