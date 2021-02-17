@@ -7,13 +7,12 @@ cache:
   paths:
     - $HOME/.cache/pip
 
-before_script:
-  - pip install tox
-
 test:
   stage: test
   image: $IMAGE
-  script: tox --skip-missing-interpreters
+  script:
+    - pip install tox
+    - tox --skip-missing-interpreters
   parallel:
     matrix:
       - IMAGE:
