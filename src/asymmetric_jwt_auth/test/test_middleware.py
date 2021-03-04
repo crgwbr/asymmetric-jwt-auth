@@ -25,9 +25,7 @@ class MiddlewareTest(TestCase):
         self.run_middleware = JWTAuthMiddleware(self.next_middleware)
 
 
-    def assertNotLoggedIn(self, request, public_key):
-        public_key.refresh_from_db()
-        self.assertIsNone(public_key.last_used_on)
+    def assertNotLoggedIn(self, request):
         self.assertEqual(getattr(request, 'user', None), None)
 
 
@@ -39,25 +37,25 @@ class MiddlewareTest(TestCase):
 
     def test_no_auth_header(self):
         request = self.rfactory.get('/')
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
     def test_auth_header_missing_type(self):
         request = self.rfactory.get('/', HTTP_AUTHORIZATION='Fooopbar')
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
     def test_auth_header_not_jwt_type(self):
         request = self.rfactory.get('/', HTTP_AUTHORIZATION='Bearer foobar')
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
@@ -65,9 +63,9 @@ class MiddlewareTest(TestCase):
         header = create_auth_header('',
             key=self.user_privkey_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
@@ -75,9 +73,9 @@ class MiddlewareTest(TestCase):
         header = create_auth_header('rusty',
             key=self.user_privkey_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
@@ -87,7 +85,7 @@ class MiddlewareTest(TestCase):
             key=privkey,
             algorithm='RS512')
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
         self.assertLoggedIn(request, self.pubkey_rsa)
         self.assertEqual(self.next_middleware.call_count, 1)
@@ -103,9 +101,9 @@ class MiddlewareTest(TestCase):
             key=privkey,
             algorithm='RS512')
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
@@ -114,7 +112,25 @@ class MiddlewareTest(TestCase):
             key=self.user_privkey_ed25519,
             algorithm='EdDSA')
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
-        self.assertNotLoggedIn(request, self.pubkey_ed25519)
+        self.assertNotLoggedIn(request)
         self.run_middleware(request)
         self.assertLoggedIn(request, self.pubkey_ed25519)
         self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_cant_reuse_nonce(self):
+        header = create_auth_header(self.user.username,
+            key=self.user_privkey_ed25519,
+            algorithm='EdDSA')
+        # First use works
+        request1 = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request1)
+        self.run_middleware(request1)
+        self.assertLoggedIn(request1, self.pubkey_ed25519)
+        self.assertEqual(self.next_middleware.call_count, 1)
+        # Second use doesn't
+        request2 = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request2)
+        self.run_middleware(request2)
+        self.assertNotLoggedIn(request2)
+        self.assertEqual(self.next_middleware.call_count, 2)
