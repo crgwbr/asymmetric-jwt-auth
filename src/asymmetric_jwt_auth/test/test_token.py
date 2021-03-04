@@ -1,13 +1,13 @@
 from django.test import TestCase
-from asymmetric_jwt_auth import generate_key_pair
-import asymmetric_jwt_auth.token as token
+from asymmetric_jwt_auth.utils import generate_rsa_key_pair
+from asymmetric_jwt_auth import token
 import time
 
 
 class AuthTest(TestCase):
 
     def test_roundtrip(self):
-        private, public = generate_key_pair()
+        private, public = generate_rsa_key_pair()
         t = token.sign('guido', private)
         token_data = token.verify(t, public)
         self.assertTrue(token_data)
@@ -15,8 +15,8 @@ class AuthTest(TestCase):
 
 
     def test_bad_keys(self):
-        private1, public1 = generate_key_pair()
-        private2, public2 = generate_key_pair()
+        private1, public1 = generate_rsa_key_pair()
+        private2, public2 = generate_rsa_key_pair()
 
         t = token.sign('guido', private1)
         token_data = token.verify(t, public1)
@@ -36,7 +36,7 @@ class AuthTest(TestCase):
 
 
     def test_bad_iat(self):
-        private, public = generate_key_pair()
+        private, public = generate_rsa_key_pair()
 
         t = token.sign('guido', private, iat=time.time())
         token_data = token.verify(t, public)
@@ -55,7 +55,7 @@ class AuthTest(TestCase):
 
 
     def test_bad_nonce(self):
-        private, public = generate_key_pair()
+        private, public = generate_rsa_key_pair()
 
         t = token.sign('guido', private, generate_nonce=lambda username, iat: 1)
         token_data = token.verify(t, public, validate_nonce=lambda username, iat, nonce: nonce == 1)
@@ -71,6 +71,6 @@ class AuthTest(TestCase):
 
 
     def test_get_claimed_username(self):
-        private, public = generate_key_pair()
+        private, public = generate_rsa_key_pair()
         t = token.sign('guido', private)
         self.assertEqual(token.get_claimed_username(t), 'guido')

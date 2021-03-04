@@ -1,16 +1,10 @@
+from . import DEFAULT_ALGORITHM, ALLOWED_ALGORITHMS, TIMESTAMP_TOLERANCE
 import jwt
 import time
-import random
 import logging
+import secrets
 
 logger = logging.getLogger(__name__)
-
-
-#: Default JWT signing algorithm
-DEFAULT_ALGORITHM = 'RS512'
-
-# Number of seconds of clock-drift to tolerate when verifying the authenticity of a JWT.
-TIMESTAMP_TOLERANCE = 20  # Seconds
 
 
 def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT_ALGORITHM):
@@ -29,7 +23,7 @@ def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT
     """
     iat = iat if iat else time.time()
     if not generate_nonce:
-        generate_nonce = lambda username, iat: random.random()  # NOQA
+        generate_nonce = lambda username, iat: secrets.token_urlsafe(nbytes=8)  # NOQA
 
     token_data = {
         'username': username,
@@ -51,13 +45,10 @@ def get_claimed_username(token):
     unverified_data = jwt.decode(token, options={
         'verify_signature': False
     })
-
-    if 'username' not in unverified_data:
-        return None
-    return unverified_data['username']
+    return unverified_data.get('username')
 
 
-def verify(token, public_key, validate_nonce=None, algorithms=[DEFAULT_ALGORITHM]):
+def verify(token, public_key, validate_nonce=None, algorithms=ALLOWED_ALGORITHMS):
     """
     Verify the validity of the given JWT using the given public key.
 

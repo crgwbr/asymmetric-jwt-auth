@@ -54,12 +54,16 @@ class JWTAuthMiddleware(object):
 
         claim_data = None
         for public in user.public_keys.all():
-            claim_data = token.verify(claim, public.key, validate_nonce=self.validate_nonce)
+            claim_data = token.verify(claim, public.key,
+                validate_nonce=self.validate_nonce,
+                algorithms=public.get_allowed_algorithms())
             if claim_data:
                 public.update_last_used_datetime()
                 break
         if not claim_data:
             return request
+
+        self.log_used_nonce(user.username, claim_data['time'], claim_data['nonce'])
 
         logger.debug('Successfully authenticated %s using JWT', user.username)
         request._dont_enforce_csrf_checks = True
@@ -67,22 +71,22 @@ class JWTAuthMiddleware(object):
         return request
 
 
-    def create_nonce_key(self, username, iat):
+    def create_nonce_key(self, username, timestamp):
         """
         Create and return the cache key for storing nonces
 
         :param username: Username as a string.
-        :param iat: Unix timestamp float or integer of when the nonce was used.
+        :param timestamp: Unix timestamp float or integer of when the nonce was used.
         :return: Cache key string.
         """
         return '%s-nonces-%s-%s' % (
             self.__class__.__name__,
             username,
-            iat,
+            timestamp,
         )
 
 
-    def log_used_nonce(self, username, iat, nonce):
+    def log_used_nonce(self, username, timestamp, nonce):
         """
         Log a nonce as being used, and therefore henceforth invalid.
 
@@ -93,21 +97,21 @@ class JWTAuthMiddleware(object):
         # TODO: Figure out some way to do this in a thread-safe manner. It'd be better to use
         # a Redis Set or something, but we don't necessarily want to be tightly coupled to
         # Redis either since not everyone uses it.
-        key = self.create_nonce_key(username, iat)
+        key = self.create_nonce_key(username, timestamp)
         used = cache.get(key, [])
         used.append(nonce)
         cache.set(key, set(used), token.TIMESTAMP_TOLERANCE * 2)
 
 
-    def validate_nonce(self, username, iat, nonce):
+    def validate_nonce(self, username, timestamp, nonce):
         """
         Confirm that the given nonce hasn't already been used.
 
         :param username: Username as a string.
-        :param iat: Unix timestamp float or integer of when the nonce was used.
+        :param timestamp: Unix timestamp float or integer of when the nonce was used.
         :param nonce: Nonce value.
         :return: True if nonce is valid, False if it is invalid.
         """
-        key = self.create_nonce_key(username, iat)
+        key = self.create_nonce_key(username, timestamp)
         used = cache.get(key, [])
         return nonce not in used

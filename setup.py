@@ -12,13 +12,14 @@ from versiontag import get_version, cache_git_tag  # NOQA
 packages = find_packages('src')
 
 install_requires = [
-    'PyJWT>=1.4.2,<2.0.0',
-    'cryptography>=1.7.1',
+    'PyJWT>=2.0.1',
+    'cryptography>=3.4.6',
     'Django>=2.2',
 ]
 
 extras_require = {
     'development': [
+        'coverage>=5.5',
         'flake8>=3.2.1',
         'sphinx>=1.5.2',
         'versiontag>=1.2.0',

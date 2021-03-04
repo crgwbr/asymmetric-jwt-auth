@@ -1,43 +1,120 @@
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
-from asymmetric_jwt_auth import create_auth_header
+from cryptography.hazmat.primitives import serialization
+from asymmetric_jwt_auth.utils import create_auth_header, generate_ed25519_key_pair, generate_rsa_key_pair
 from asymmetric_jwt_auth.models import PublicKey
 from asymmetric_jwt_auth.middleware import JWTAuthMiddleware
 from unittest import mock
-import os.path
-
-BASE = os.path.dirname(os.path.abspath(__file__))
-KEY1_PRIVATE = os.path.join(BASE, 'dummy.privkey')
-KEY1_PUBLIC = os.path.join(BASE, 'dummy.pub')
 
 
 class MiddlewareTest(TestCase):
 
     def setUp(self):
+        self.rfactory = RequestFactory()
         self.user = User.objects.create_user(username='foo')
-        with open(KEY1_PUBLIC, 'r') as pubkey_file:
-            key = pubkey_file.read()
-        self.public_key = PublicKey.objects.create(
+        self.user2 = User.objects.create_user(username='bar')
+        self.user_privkey_ed25519, self.user_pubkey_ed25519 = generate_ed25519_key_pair()
+        self.user_privkey_rsa, self.user_pubkey_rsa = generate_rsa_key_pair()
+        self.pubkey_ed25519 = PublicKey.objects.create(
             user=self.user,
-            key=key)
+            key=self.user_pubkey_ed25519)
+        self.pubkey_rsa = PublicKey.objects.create(
+            user=self.user,
+            key=self.user_pubkey_rsa)
+        self.next_middleware = mock.MagicMock()
+        self.run_middleware = JWTAuthMiddleware(self.next_middleware)
 
 
-    def test_authenticate_request(self):
-        header = create_auth_header('foo', key_file=KEY1_PRIVATE)
-        rfactory = RequestFactory()
-        request = rfactory.get('/', HTTP_AUTHORIZATION=header)
-
-        next_middleware = mock.MagicMock()
-        run_middleware = JWTAuthMiddleware(next_middleware)
-
-        self.public_key.refresh_from_db()
-        self.assertIsNone(self.public_key.last_used_on)
-        self.assertEqual(next_middleware.call_count, 0)
+    def assertNotLoggedIn(self, request, public_key):
+        public_key.refresh_from_db()
+        self.assertIsNone(public_key.last_used_on)
         self.assertEqual(getattr(request, 'user', None), None)
 
-        run_middleware(request)
 
-        self.public_key.refresh_from_db()
-        self.assertIsNotNone(self.public_key.last_used_on)
-        self.assertEqual(next_middleware.call_count, 1)
+    def assertLoggedIn(self, request, public_key):
+        public_key.refresh_from_db()
+        self.assertIsNotNone(public_key.last_used_on)
         self.assertEqual(getattr(request, 'user', None), self.user)
+
+
+    def test_no_auth_header(self):
+        request = self.rfactory.get('/')
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_auth_header_missing_type(self):
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION='Fooopbar')
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_auth_header_not_jwt_type(self):
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION='Bearer foobar')
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_header_jwt_missing_username(self):
+        header = create_auth_header('',
+            key=self.user_privkey_rsa)
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_header_jwt_claimed_username_doesnt_exist(self):
+        header = create_auth_header('rusty',
+            key=self.user_privkey_rsa)
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_authenticate_request_rsa(self):
+        privkey = serialization.load_pem_private_key(self.user_privkey_rsa.encode(), password=None)
+        header = create_auth_header(self.user.username,
+            key=privkey,
+            algorithm='RS512')
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_authenticate_request_rsa_unregistered_key(self):
+        self.pubkey_rsa.user = self.user2
+        self.pubkey_rsa.save()
+        self.pubkey_ed25519.user = self.user2
+        self.pubkey_ed25519.save()
+        privkey = serialization.load_pem_private_key(self.user_privkey_rsa.encode(), password=None)
+        header = create_auth_header(self.user.username,
+            key=privkey,
+            algorithm='RS512')
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request, self.pubkey_rsa)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_authenticate_request_ed25519(self):
+        header = create_auth_header(self.user.username,
+            key=self.user_privkey_ed25519,
+            algorithm='EdDSA')
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request, self.pubkey_ed25519)
+        self.run_middleware(request)
+        self.assertLoggedIn(request, self.pubkey_ed25519)
+        self.assertEqual(self.next_middleware.call_count, 1)

@@ -1,7 +1,8 @@
 from django.test import TestCase
-from asymmetric_jwt_auth import create_auth_header, generate_key_pair
-from asymmetric_jwt_auth.token import verify
+from ..utils import create_auth_header, generate_rsa_key_pair
+from ..token import verify
 import os.path
+
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,8 +17,8 @@ KEY2_PASSWORD = b'password'
 class HTTPHeaderTest(TestCase):
 
     def test_generate_from_key_string(self):
-        private1, public1 = generate_key_pair()
-        private2, public2 = generate_key_pair()
+        private1, public1 = generate_rsa_key_pair()
+        private2, public2 = generate_rsa_key_pair()
         header = create_auth_header('foo', key=private1)
         self.assertTrue(header.startswith('JWT '))
         token = header.split(' ', 1)[1]

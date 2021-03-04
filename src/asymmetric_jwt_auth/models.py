@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from cryptography.hazmat.backends import default_backend
 
 
@@ -44,6 +45,28 @@ class PublicKey(models.Model):
 
     #: Date and time that key was last used for authenticating a request.
     last_used_on = models.DateTimeField("Last Used On", null=True, blank=True)
+
+
+    def get_allowed_algorithms(self):
+        pubkey = self.get_loaded_key()
+        if isinstance(pubkey, Ed25519PublicKey):
+            return [
+                'EdDSA',
+            ]
+        return [
+            'RS384',
+            'RS256',
+            'RS512',
+        ]
+
+
+    def get_loaded_key(self):
+        for load in (load_pem_public_key, load_ssh_public_key):
+            try:
+                return load(self.key.encode(), default_backend())
+            except Exception:
+                pass
+        return None
 
 
     def update_last_used_datetime(self):
