@@ -6,11 +6,11 @@ import os.path
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 
-KEY1_PRIVATE = os.path.join(BASE, 'dummy.privkey')
-KEY1_PUBLIC = os.path.join(BASE, 'dummy.pub')
+KEY1_PRIVATE = os.path.join(BASE, 'fixtures/dummy_rsa.privkey')
+KEY1_PUBLIC = os.path.join(BASE, 'fixtures/dummy_rsa.pub')
 
-KEY2_PRIVATE = os.path.join(BASE, 'dummy_encrypted.privkey')
-KEY2_PUBLIC = os.path.join(BASE, 'dummy_encrypted.pub')
+KEY2_PRIVATE = os.path.join(BASE, 'fixtures/dummy_rsa_encrypted.privkey')
+KEY2_PUBLIC = os.path.join(BASE, 'fixtures/dummy_rsa_encrypted.pub')
 KEY2_PASSWORD = b'password'
 
 

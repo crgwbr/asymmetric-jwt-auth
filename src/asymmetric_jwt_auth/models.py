@@ -7,22 +7,23 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from cryptography.hazmat.backends import default_backend
 
 
-def validate_public_key(value):
+def load_serialized_public_key(keystr):
+    exc = None
+    for load in (load_pem_public_key, load_ssh_public_key):
+        try:
+            return None, load(keystr.encode(), default_backend())
+        except Exception as e:
+            exc = e
+    return exc, None
+
+
+def validate_public_key(keystr):
     """
     Check that the given value is a valid RSA Public key in either PEM or OpenSSH format. If it is invalid,
     raises ``django.core.exceptions.ValidationError``.
     """
-    is_valid = False
-    exc = None
-
-    for load in (load_pem_public_key, load_ssh_public_key):
-        if not is_valid:
-            try:
-                load(value.encode('utf-8'), default_backend())
-                is_valid = True
-            except Exception as e:
-                exc = e
-
+    exc, key = load_serialized_public_key(keystr)
+    is_valid = (exc is None) and (key is not None)
     if not is_valid:
         raise ValidationError('Public key is invalid: %s' % exc)
 
@@ -61,12 +62,10 @@ class PublicKey(models.Model):
 
 
     def get_loaded_key(self):
-        for load in (load_pem_public_key, load_ssh_public_key):
-            try:
-                return load(self.key.encode(), default_backend())
-            except Exception:
-                pass
-        return None
+        exc, key = load_serialized_public_key(self.key)
+        if exc is not None and key is None:
+            raise exc
+        return key
 
 
     def update_last_used_datetime(self):

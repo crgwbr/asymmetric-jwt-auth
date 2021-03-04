@@ -176,4 +176,5 @@ TEKFfWkZytXCAnmC9hk9RtzUZ/lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V
             key="ssh-ed25519 AAAAC3Nza+7uJkwEtRO2UCI2WxRiRpU3 crgwbr@foo",
             comment="")
         pub.save()
-        self.assertIsNone(pub.get_loaded_key())
+        with self.assertRaises(ValueError):
+            pub.get_loaded_key()
