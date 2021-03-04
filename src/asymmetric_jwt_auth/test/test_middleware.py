@@ -1,10 +1,10 @@
+from unittest import mock
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
 from cryptography.hazmat.primitives import serialization
-from asymmetric_jwt_auth.utils import create_auth_header, generate_ed25519_key_pair, generate_rsa_key_pair
-from asymmetric_jwt_auth.models import PublicKey
-from asymmetric_jwt_auth.middleware import JWTAuthMiddleware
-from unittest import mock
+from ..utils import create_auth_header, generate_ed25519_key_pair, generate_rsa_key_pair
+from ..models import PublicKey
+from ..middleware import JWTAuthMiddleware
 
 
 class MiddlewareTest(TestCase):

@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
-from asymmetric_jwt_auth import models
+from .. import models
 
 
 class ValidatePublicKeyTest(TestCase):

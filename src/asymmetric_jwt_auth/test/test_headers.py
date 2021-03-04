@@ -22,8 +22,12 @@ class HTTPHeaderTest(TestCase):
         header = create_auth_header('foo', key=private1)
         self.assertTrue(header.startswith('JWT '))
         token = header.split(' ', 1)[1]
-        self.assertFalse(verify(token, public2))
-        self.assertTrue(verify(token, public1))
+        self.assertFalse(verify(token, public2,
+            validate_nonce=lambda username, iat, nonce: True,
+            algorithms=['RS512']))
+        self.assertTrue(verify(token, public1,
+            validate_nonce=lambda username, iat, nonce: True,
+            algorithms=['RS512']))
 
 
     def test_generate_from_key_file(self):
@@ -31,7 +35,9 @@ class HTTPHeaderTest(TestCase):
         self.assertTrue(header.startswith('JWT '))
         token = header.split(' ', 1)[1]
         with open(KEY1_PUBLIC, 'r') as public:
-            self.assertTrue(verify(token, public.read()))
+            self.assertTrue(verify(token, public.read(),
+                validate_nonce=lambda username, iat, nonce: True,
+                algorithms=['RS512']))
 
 
     def test_generate_from_encrypted_key_file(self):
@@ -39,4 +45,6 @@ class HTTPHeaderTest(TestCase):
         self.assertTrue(header.startswith('JWT '))
         token = header.split(' ', 1)[1]
         with open(KEY2_PUBLIC, 'r') as public:
-            self.assertTrue(verify(token, public.read()))
+            self.assertTrue(verify(token, public.read(),
+                validate_nonce=lambda username, iat, nonce: True,
+                algorithms=['RS512']))

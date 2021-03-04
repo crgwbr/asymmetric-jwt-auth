@@ -1,7 +1,7 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from asymmetric_jwt_auth import AUTH_METHOD
-import asymmetric_jwt_auth.token as token
+from . import token, default_settings
 import logging
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,8 @@ class JWTAuthMiddleware(object):
         except ValueError:
             return request
 
-        if method.upper() != AUTH_METHOD:
+        auth_method_setting = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['AUTH_METHOD']
+        if method.upper() != auth_method_setting:
             return request
 
         username = token.get_claimed_username(claim)
@@ -54,7 +55,9 @@ class JWTAuthMiddleware(object):
 
         claim_data = None
         for public in user.public_keys.all():
-            claim_data = token.verify(claim, public.key,
+            claim_data = token.verify(
+                token=claim,
+                public_key=public.key,
                 validate_nonce=self.validate_nonce,
                 algorithms=public.get_allowed_algorithms())
             if claim_data:
@@ -100,7 +103,8 @@ class JWTAuthMiddleware(object):
         key = self.create_nonce_key(username, timestamp)
         used = cache.get(key, [])
         used.append(nonce)
-        cache.set(key, set(used), token.TIMESTAMP_TOLERANCE * 2)
+        timestamp_tolerance = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['TIMESTAMP_TOLERANCE']
+        cache.set(key, set(used), timestamp_tolerance * 2)
 
 
     def validate_nonce(self, username, timestamp, nonce):

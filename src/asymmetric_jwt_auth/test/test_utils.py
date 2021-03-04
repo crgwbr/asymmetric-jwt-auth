@@ -1,7 +1,7 @@
 from django.test import TestCase
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey, Ed25519PublicKey
-from asymmetric_jwt_auth import utils
+from .. import utils
 
 
 class UtilsTest(TestCase):

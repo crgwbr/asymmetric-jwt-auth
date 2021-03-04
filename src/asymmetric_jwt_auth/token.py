@@ -1,4 +1,5 @@
-from . import DEFAULT_ALGORITHM, ALLOWED_ALGORITHMS, TIMESTAMP_TOLERANCE
+from django.conf import settings
+from . import default_settings
 import jwt
 import time
 import logging
@@ -7,7 +8,7 @@ import secrets
 logger = logging.getLogger(__name__)
 
 
-def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT_ALGORITHM):
+def sign(username, private_key, generate_nonce=None, iat=None, algorithm=None):
     """
     Create a signed JWT using the given username and RSA private key.
 
@@ -24,6 +25,9 @@ def sign(username, private_key, generate_nonce=None, iat=None, algorithm=DEFAULT
     iat = iat if iat else time.time()
     if not generate_nonce:
         generate_nonce = lambda username, iat: secrets.token_urlsafe(nbytes=8)  # NOQA
+
+    if not algorithm:
+        algorithm = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['DEFAULT_ALGORITHM']
 
     token_data = {
         'username': username,
@@ -48,7 +52,7 @@ def get_claimed_username(token):
     return unverified_data.get('username')
 
 
-def verify(token, public_key, validate_nonce=None, algorithms=ALLOWED_ALGORITHMS):
+def verify(token, public_key, validate_nonce, algorithms):
     """
     Verify the validity of the given JWT using the given public key.
 
@@ -70,18 +74,16 @@ def verify(token, public_key, validate_nonce=None, algorithms=ALLOWED_ALGORITHMS
 
     # Ensure time is within acceptable bounds
     current_time = time.time()
-    min_time, max_time = (current_time - TIMESTAMP_TOLERANCE, current_time + TIMESTAMP_TOLERANCE)
+    timestamp_tolerance = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['TIMESTAMP_TOLERANCE']
+    min_time, max_time = (current_time - timestamp_tolerance, current_time + timestamp_tolerance)
     if claimed_time < min_time or claimed_time > max_time:
         logger.debug('Claimed time is outside of allowable tolerances')
         return False
 
     # Ensure nonce is unique
-    if validate_nonce:
-        if not validate_nonce(claimed_username, claimed_time, claimed_nonce):
-            logger.debug('Claimed nonce failed to validate')
-            return False
-    else:
-        logger.warning('validate_nonce function was not supplied!')
+    if not validate_nonce(claimed_username, claimed_time, claimed_nonce):
+        logger.debug('Claimed nonce failed to validate')
+        return False
 
     # If we've gotten this far, the token is valid
     return token_data

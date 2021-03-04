@@ -8,7 +8,8 @@ from cryptography.hazmat.primitives.serialization import (
     PublicFormat,
     NoEncryption
 )
-from . import token, AUTH_METHOD, DEFAULT_ALGORITHM
+from django.conf import settings
+from . import token, default_settings
 import os.path
 
 
@@ -83,7 +84,7 @@ def decrypt_key(key, password):
     return private.private_bytes(Encoding.PEM, PrivateFormat.PKCS8, NoEncryption())
 
 
-def create_auth_header(username, key=None, key_file="~/.ssh/id_rsa", key_password=None, algorithm=DEFAULT_ALGORITHM):
+def create_auth_header(username, key=None, key_file="~/.ssh/id_rsa", key_password=None, algorithm=None):
     """
     Create an HTTP Authorization header using a private key file.
 
@@ -97,6 +98,9 @@ def create_auth_header(username, key=None, key_file="~/.ssh/id_rsa", key_passwor
     """
     if not key:
         key = load_private_key(key_file, key_password)
+    if not algorithm:
+        algorithm = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['DEFAULT_ALGORITHM']
+    auth_method = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['AUTH_METHOD']
     claim = token.sign(username, key,
         algorithm=algorithm)
-    return "%s %s" % (AUTH_METHOD, claim)
+    return "%s %s" % (auth_method, claim)
