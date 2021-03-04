@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from jwt.exceptions import PyJWKClientError
 from . import token, default_settings
+from .models import JWKSEndpointTrust
 import logging
 
 logger = logging.getLogger(__name__)
@@ -31,9 +33,11 @@ class JWTAuthMiddleware(object):
 
         :param request: Django Request instance
         """
+        # Check for presence of auth header
         if 'HTTP_AUTHORIZATION' not in request.META:
             return request
 
+        # Ensure this auth header was meant for us (it has the JWT auth method).
         try:
             method, claim = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
         except ValueError:
@@ -43,10 +47,12 @@ class JWTAuthMiddleware(object):
         if method.upper() != auth_method_setting:
             return request
 
+        # Get the (unvalidated!) username that the request is claiming to be
         username = token.get_claimed_username(claim)
         if not username:
             return request
 
+        # Get the Django user model
         User = get_user_model()
         try:
             user = User.objects.get(username=username)
@@ -54,20 +60,43 @@ class JWTAuthMiddleware(object):
             return request
 
         claim_data = None
-        for public in user.public_keys.all():
-            claim_data = token.verify(
-                token=claim,
-                public_key=public.key,
-                validate_nonce=self.validate_nonce,
-                algorithms=public.get_allowed_algorithms())
-            if claim_data:
-                public.update_last_used_datetime()
-                break
+
+        # Try to validate the claim using the user's JWKS endpoint
+        jwks_endpoint = JWKSEndpointTrust.objects.filter(user=user).first()
+        if jwks_endpoint:
+            try:
+                public = jwks_endpoint.get_signing_key(claim)
+                # TODO: Why doesn't the JWK RFC support EdDSA keys?
+                # https://tools.ietf.org/html/rfc7517
+                algorithms = ['RS384', 'RS256', 'RS512']
+                claim_data = token.verify(
+                    token=claim,
+                    public_key=public.key,
+                    validate_nonce=self.validate_nonce,
+                    algorithms=algorithms)
+            except PyJWKClientError:
+                claim_data = None
+
+        # Try to find a public key assigned to the user which validates the claimed username
+        if claim_data is None:
+            for public in user.public_keys.all():
+                claim_data = token.verify(
+                    token=claim,
+                    public_key=public.key,
+                    validate_nonce=self.validate_nonce,
+                    algorithms=public.get_allowed_algorithms())
+                if claim_data:
+                    public.update_last_used_datetime()
+                    break
+
+        # No keys successfully validated the claim? Abort.
         if not claim_data:
             return request
 
+        # Log the nonce so it can't be used again
         self.log_used_nonce(user.username, claim_data['time'], claim_data['nonce'])
 
+        # Assign the user to the request
         logger.debug('Successfully authenticated %s using JWT', user.username)
         request._dont_enforce_csrf_checks = True
         request.user = user

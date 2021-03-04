@@ -5,6 +5,7 @@ from django.utils import timezone
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from .. import models
+import jwt
 
 
 class ValidatePublicKeyTest(TestCase):
@@ -178,3 +179,31 @@ TEKFfWkZytXCAnmC9hk9RtzUZ/lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V
         pub.save()
         with self.assertRaises(ValueError):
             pub.get_loaded_key()
+
+
+
+class JWKSEndpointTrustTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='foo')
+        self.jwks = models.JWKSEndpointTrust.objects.create(
+            user=self.user,
+            jwks_url='https://dev-87evx9ru.auth0.com/.well-known/jwks.json')
+
+    def test_get_signing_key(self):
+        token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik5FRTFRVVJCT1RNNE16STVSa0ZETlRZeE9UVTFNRGcyT0Rnd1EwVXpNVGsxUWpZeVJrUkZRdyJ9.eyJpc3MiOiJodHRwczovL2Rldi04N2V2eDlydS5hdXRoMC5jb20vIiwic3ViIjoiYVc0Q2NhNzl4UmVMV1V6MGFFMkg2a0QwTzNjWEJWdENAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vZXhwZW5zZXMtYXBpIiwiaWF0IjoxNTcyMDA2OTU0LCJleHAiOjE1NzIwMDY5NjQsImF6cCI6ImFXNENjYTc5eFJlTFdVejBhRTJINmtEME8zY1hCVnRDIiwiZ3R5IjoiY2xpZW50LWNyZWRlbnRpYWxzIn0.PUxE7xn52aTCohGiWoSdMBZGiYAHwE5FYie0Y1qUT68IHSTXwXVd6hn02HTah6epvHHVKA2FqcFZ4GGv5VTHEvYpeggiiZMgbxFrmTEY0csL6VNkX1eaJGcuehwQCRBKRLL3zKmA5IKGy5GeUnIbpPHLHDxr-GXvgFzsdsyWlVQvPX2xjeaQ217r2PtxDeqjlf66UYl6oY6AqNS8DH3iryCvIfCcybRZkc_hdy-6ZMoKT6Piijvk_aXdm7-QQqKJFHLuEqrVSOuBqqiNfVrG27QzAPuPOxvfXTVLXL2jek5meH6n-VWgrBdoMFH93QEszEDowDAEhQPHVs0xj7SIzA"  # NOQA
+        signing_key = self.jwks.get_signing_key(token)
+        data = jwt.decode(
+            token,
+            signing_key.key,
+            algorithms=["RS256"],
+            audience="https://expenses-api",
+            options={"verify_exp": False})
+        self.assertEqual(data, {
+            'iss': 'https://dev-87evx9ru.auth0.com/',
+            'sub': 'aW4Cca79xReLWUz0aE2H6kD0O3cXBVtC@clients',
+            'aud': 'https://expenses-api',
+            'iat': 1572006954,
+            'exp': 1572006964,
+            'azp': 'aW4Cca79xReLWUz0aE2H6kD0O3cXBVtC',
+            'gty': 'client-credentials',
+        })

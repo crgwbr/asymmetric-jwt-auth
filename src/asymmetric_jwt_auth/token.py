@@ -1,11 +1,33 @@
 from django.conf import settings
+from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    PublicFormat,
+    load_pem_private_key,
+)
 from . import default_settings
 import jwt
 import time
 import logging
 import secrets
+import hashlib
 
 logger = logging.getLogger(__name__)
+
+
+def load_serialized_public_key(keystr):
+    exc = None
+    for load in (load_pem_public_key, load_ssh_public_key):
+        try:
+            return None, load(keystr.encode())
+        except Exception as e:
+            exc = e
+    return exc, None
+
+
+def get_public_key_fingerprint(public_key):
+    pem_bytes = public_key.public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo)
+    return hashlib.sha256(pem_bytes).hexdigest()
 
 
 def sign(username, private_key, generate_nonce=None, iat=None, algorithm=None):
@@ -29,13 +51,26 @@ def sign(username, private_key, generate_nonce=None, iat=None, algorithm=None):
     if not algorithm:
         algorithm = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['DEFAULT_ALGORITHM']
 
+    # Load private key
+    if isinstance(private_key, str):
+        private_key = private_key.encode()
+    if isinstance(private_key, bytes):
+        private_key = load_pem_private_key(private_key, password=None)
+    # Use public key fingerprint as KID
+    public_key = private_key.public_key()
+    kid = get_public_key_fingerprint(public_key)
+    # Build and sign claim data
     token_data = {
         'username': username,
         'time': iat,
         'nonce': generate_nonce(username, iat),
     }
-
-    token = jwt.encode(token_data, private_key, algorithm=algorithm)
+    headers = {
+        'kid': kid,
+    }
+    token = jwt.encode(token_data, private_key,
+        algorithm=algorithm,
+        headers=headers)
     return token
 
 

@@ -11,6 +11,8 @@ from cryptography.hazmat.primitives.serialization import (
 from django.conf import settings
 from . import token, default_settings
 import os.path
+import struct
+import base64
 
 
 def generate_ed25519_key_pair(as_string=True, encoding=Encoding.PEM):
@@ -104,3 +106,24 @@ def create_auth_header(username, key=None, key_file="~/.ssh/id_rsa", key_passwor
     claim = token.sign(username, key,
         algorithm=algorithm)
     return "%s %s" % (auth_method, claim)
+
+
+def long2intarr(long_int):
+    _bytes = []
+    while long_int:
+        long_int, r = divmod(long_int, 256)
+        _bytes.insert(0, r)
+    return _bytes
+
+
+def long_to_base64(n, mlen=0):
+    bys = long2intarr(n)
+    if mlen:
+        _len = mlen - len(bys)
+        if _len:
+            bys = [0] * _len + bys
+    data = struct.pack('%sB' % len(bys), *bys)
+    if not len(data):
+        data = '\x00'
+    s = base64.urlsafe_b64encode(data).rstrip(b'=')
+    return s.decode("ascii")
