@@ -20,8 +20,14 @@ install_requires = [
 extras_require = {
     'development': [
         'coverage>=5.5',
+        'django-stubs>=1.7.0',
         'flake8>=3.2.1',
-        'sphinx>=1.5.2',
+        'freezegun>=1.1.0',
+        'mypy>=0.812',
+        'sphinx-rtd-theme>=0.5.1',
+        'sphinx>=3.5.1',
+        'types-cryptography>=0.1.1',
+        'typing>=3.7.4.3',
         'versiontag>=1.2.0',
     ],
 }

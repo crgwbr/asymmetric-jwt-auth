@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'asymmetric-jwt-auth'
-copyright = '2017, Craig Weber <crgwbr@gmail.com>'
+copyright = '2021, Craig Weber <crgwbr@gmail.com>'
 author = 'Craig Weber <crgwbr@gmail.com>'
 
 # The version info for the project you're documenting, acts as replacement for

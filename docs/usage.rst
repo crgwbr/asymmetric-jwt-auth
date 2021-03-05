@@ -8,16 +8,19 @@ Here’s an example of making a request to a server using a JWT authentication h
 
 .. code:: python
 
-    from asymmetric_jwt_auth import create_auth_header
+    from asymmetric_jwt_auth.keys import PrivateKey
+    from asymmetric_jwt_auth.tokens import Token
     import requests
 
-    auth = create_auth_header(
-        username='crgwbr',        # This is the user to authenticate as on the server
-        key_file='~/.ssh/id_rsa') # This is the local path to the file containing our RSA private key
+    # Load an RSA private key from file
+    privkey = PrivateKey.load_pem_from_file('~/.ssh/id_rsa')
+    # This is the user to authenticate as on the server
+    auth = Token(username='crgwbr').create_auth_header(privkey)
 
     r = requests.get('http://example.com/api/endpoint/', headers={
-        'Authorization': auth
+        'Authorization': auth,
     })
+
 
 Encrypted Private Key File
 --------------------------
@@ -26,26 +29,30 @@ This method also supports using an encrypted private key.
 
 .. code:: python
 
-    from asymmetric_jwt_auth import create_auth_header
+    from asymmetric_jwt_auth.keys import PrivateKey
+    from asymmetric_jwt_auth.tokens import Token
     import requests
 
-    auth = create_auth_header(
-        username='crgwbr',
-        key_file='~/.ssh/id_rsa',
-        key_password='somepassphrase')
+    # Load an RSA private key from file
+    privkey = PrivateKey.load_pem_from_file('~/.ssh/id_rsa',
+        password='somepassphrase')
+    # This is the user to authenticate as on the server
+    auth = Token(username='crgwbr').create_auth_header(privkey)
 
     r = requests.get('http://example.com/api/endpoint/', headers={
         'Authorization': auth
     })
 
+
 Private Key File String
 -----------------------
 
-If already you have the public key as a string (or even as an instance of ``cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey``), you can work directly with that instead of using a key file.
+If already you have the public key as a string, you can work directly with that instead of using a key file.
 
 .. code:: python
 
-    from asymmetric_jwt_auth import create_auth_header
+    from asymmetric_jwt_auth.keys import PrivateKey
+    from asymmetric_jwt_auth.tokens import Token
     import requests
 
     MY_KEY = """-----BEGIN PRIVATE KEY-----
@@ -78,9 +85,8 @@ If already you have the public key as a string (or even as an instance of ``cryp
     -----END PRIVATE KEY-----
     """
 
-    auth = create_auth_header(
-        username='crgwbr',
-        key=MY_KEY)
+    privkey = PrivateKey.load_pem(MY_KEY.encode())
+    auth = Token(username='crgwbr').create_auth_header(privkey)
 
     r = requests.get('http://example.com/api/endpoint/', headers={
         'Authorization': auth

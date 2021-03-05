@@ -1,16 +1,10 @@
 from unittest import mock
 from django.test import RequestFactory, TestCase
 from django.contrib.auth.models import User
-from cryptography.hazmat.primitives import serialization
 from ..models import PublicKey, JWKSEndpointTrust
 from ..middleware import JWTAuthMiddleware
-from ..token import get_public_key_fingerprint
-from ..utils import (
-    create_auth_header,
-    generate_ed25519_key_pair,
-    generate_rsa_key_pair,
-    long_to_base64,
-)
+from ..tokens import Token
+from ..keys import RSAPrivateKey, Ed25519PrivateKey
 
 
 class BaseMiddlewareTest(TestCase):
@@ -31,14 +25,17 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.rfactory = RequestFactory()
         self.user = User.objects.create_user(username='foo')
         self.user2 = User.objects.create_user(username='bar')
-        self.user_privkey_ed25519, self.user_pubkey_ed25519 = generate_ed25519_key_pair()
-        self.user_privkey_rsa, self.user_pubkey_rsa = generate_rsa_key_pair()
-        self.pubkey_ed25519 = PublicKey.objects.create(
+
+        self.key_ed25519 = Ed25519PrivateKey.generate()
+        self.key_rsa = RSAPrivateKey.generate()
+
+        self.user_key_ed25519 = PublicKey.objects.create(
             user=self.user,
-            key=self.user_pubkey_ed25519)
-        self.pubkey_rsa = PublicKey.objects.create(
+            key=self.key_ed25519.public_key.as_pem.decode())
+        self.user_key_rsa = PublicKey.objects.create(
             user=self.user,
-            key=self.user_pubkey_rsa)
+            key=self.key_rsa.public_key.as_pem.decode())
+
         self.next_middleware = mock.MagicMock()
         self.run_middleware = JWTAuthMiddleware(self.next_middleware)
 
@@ -68,8 +65,7 @@ class MiddlewareTest(BaseMiddlewareTest):
 
 
     def test_header_jwt_missing_username(self):
-        header = create_auth_header('',
-            key=self.user_privkey_rsa)
+        header = Token('').create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
@@ -78,8 +74,7 @@ class MiddlewareTest(BaseMiddlewareTest):
 
 
     def test_header_jwt_claimed_username_doesnt_exist(self):
-        header = create_auth_header('rusty',
-            key=self.user_privkey_rsa)
+        header = Token('rusty').create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
@@ -87,27 +82,23 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
-    def test_authenticate_request_rsa(self):
-        privkey = serialization.load_pem_private_key(self.user_privkey_rsa.encode(), password=None)
-        header = create_auth_header(self.user.username,
-            key=privkey,
-            algorithm='RS512')
+    def test_authenticate_request_rsa_valid(self):
+        header = Token(self.user.username).create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertLoggedIn(request, self.pubkey_rsa)
+        self.assertLoggedIn(request, self.user_key_rsa)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
     def test_authenticate_request_rsa_unregistered_key(self):
-        self.pubkey_rsa.user = self.user2
-        self.pubkey_rsa.save()
-        self.pubkey_ed25519.user = self.user2
-        self.pubkey_ed25519.save()
-        privkey = serialization.load_pem_private_key(self.user_privkey_rsa.encode(), password=None)
-        header = create_auth_header(self.user.username,
-            key=privkey,
-            algorithm='RS512')
+        # Assign the pub keys to user 2
+        self.user_key_ed25519.user = self.user2
+        self.user_key_ed25519.save()
+        self.user_key_rsa.user = self.user2
+        self.user_key_rsa.save()
+        # Try to use user2's key to login as user1
+        header = Token(self.user.username).create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
@@ -115,26 +106,31 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
-    def test_authenticate_request_ed25519(self):
-        header = create_auth_header(self.user.username,
-            key=self.user_privkey_ed25519,
-            algorithm='EdDSA')
+    def test_authenticate_request_ed25519_valid(self):
+        header = Token(self.user.username).create_auth_header(self.key_ed25519)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
-        self.assertLoggedIn(request, self.pubkey_ed25519)
+        self.assertLoggedIn(request, self.user_key_ed25519)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    def test_missing_data(self):
+        header = Token(self.user.username, timestamp=0).create_auth_header(self.key_ed25519)
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
 
     def test_cant_reuse_nonce(self):
-        header = create_auth_header(self.user.username,
-            key=self.user_privkey_ed25519,
-            algorithm='EdDSA')
+        header = Token(self.user.username).create_auth_header(self.key_ed25519)
         # First use works
         request1 = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request1)
         self.run_middleware(request1)
-        self.assertLoggedIn(request1, self.pubkey_ed25519)
+        self.assertLoggedIn(request1, self.user_key_ed25519)
         self.assertEqual(self.next_middleware.call_count, 1)
         # Second use doesn't
         request2 = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
@@ -150,35 +146,25 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
     def setUp(self):
         self.rfactory = RequestFactory()
         self.user = User.objects.create_user(username='foo')
-        self.privkey_ed25519, self.pubkey_ed25519 = generate_ed25519_key_pair()
-        self.privkey_rsa, self.pubkey_rsa = generate_rsa_key_pair()
+
+        self.key_ed25519 = Ed25519PrivateKey.generate()
+        self.key_rsa = RSAPrivateKey.generate()
+
         self.next_middleware = mock.MagicMock()
         self.run_middleware = JWTAuthMiddleware(self.next_middleware)
 
 
     @mock.patch('asymmetric_jwt_auth.models.PyJWKClient.fetch_data')
     def test_authenticate_request_rsa(self, mock_fetch_data):
-        privkey = serialization.load_pem_private_key(self.privkey_rsa.encode(), password=None)
-        public = privkey.public_key()
-        public_numbers = public.public_numbers()
         mock_fetch_data.return_value = {
             "keys": [
-                {
-                    "kty": "RSA",
-                    "use": "sig",
-                    "alg": "RS512",
-                    "kid": get_public_key_fingerprint(public),
-                    "n": long_to_base64(public_numbers.n),
-                    "e": long_to_base64(public_numbers.e),
-                },
+                self.key_rsa.public_key.as_jwk,
             ],
         }
         JWKSEndpointTrust.objects.create(
             user=self.user,
             jwks_url='')
-        header = create_auth_header(self.user.username,
-            key=privkey,
-            algorithm='RS512')
+        header = Token(self.user.username).create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)
@@ -188,27 +174,55 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
 
     @mock.patch('asymmetric_jwt_auth.models.PyJWKClient.fetch_data')
     def test_no_matching_key(self, mock_fetch_data):
-        privkey = serialization.load_pem_private_key(self.privkey_rsa.encode(), password=None)
-        public = privkey.public_key()
-        public_numbers = public.public_numbers()
+        # Change the key ID of the JWKS response so it doesn't match the kid in the header JWT
+        jwk = self.key_rsa.public_key.as_jwk
+        jwk['kid'] = 'foobar'
         mock_fetch_data.return_value = {
             "keys": [
-                {
-                    "kty": "RSA",
-                    "use": "sig",
-                    "alg": "RS512",
-                    "kid": 'foobar',
-                    "n": long_to_base64(public_numbers.n),
-                    "e": long_to_base64(public_numbers.e),
-                },
+                jwk,
             ],
         }
         JWKSEndpointTrust.objects.create(
             user=self.user,
             jwks_url='')
-        header = create_auth_header(self.user.username,
-            key=privkey,
-            algorithm='RS512')
+        header = Token(self.user.username).create_auth_header(self.key_rsa)
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    @mock.patch('asymmetric_jwt_auth.models.PyJWKClient.fetch_data')
+    def test_header_jwt_claimed_username_doesnt_exist(self, mock_fetch_data):
+        mock_fetch_data.return_value = {
+            "keys": [
+                self.key_rsa.public_key.as_jwk,
+            ],
+        }
+        JWKSEndpointTrust.objects.create(
+            user=self.user,
+            jwks_url='')
+        header = Token('rusty').create_auth_header(self.key_rsa)
+        request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
+        self.assertNotLoggedIn(request)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
+
+    @mock.patch('asymmetric_jwt_auth.models.PyJWKClient.fetch_data')
+    def test_missing_data(self, mock_fetch_data):
+        print(self.key_rsa.public_key.as_jwk)
+        mock_fetch_data.return_value = {
+            "keys": [
+                self.key_rsa.public_key.as_jwk,
+            ],
+        }
+        JWKSEndpointTrust.objects.create(
+            user=self.user,
+            jwks_url='')
+        header = Token(self.user.username, timestamp=0).create_auth_header(self.key_rsa)
         request = self.rfactory.get('/', HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)

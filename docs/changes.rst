@@ -3,11 +3,11 @@ Change Log
 
 1.0.0
 -----
-- Function ``asymmetric_jwt_auth.generate_key_pair`` moved/renamed to ``asymmetric_jwt_auth.utils.generate_rsa_key_pair``.
 - Updated cryptography dependency to ``>=3.4.6``.
 - Updated PyJWT dependency to ``>=2.0.1``.
 - Added support for EdDSA signing and verification.
 - Added support for obtaining public keys via JWKS endpoints.
+- Refactored many things into classes to be more extensible.
 
 0.5.0
 -----

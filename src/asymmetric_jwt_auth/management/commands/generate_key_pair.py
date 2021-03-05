@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
-from asymmetric_jwt_auth.utils import (
-    generate_ed25519_key_pair,
-    generate_rsa_key_pair,
+from asymmetric_jwt_auth.keys import (
+    RSAPrivateKey,
+    Ed25519PrivateKey,
 )
 
 TYPE_RSA = 'RSA'
@@ -22,8 +22,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, keytype=TYPE_RSA, **options):
         if keytype == TYPE_ED25519:
-            pem_private, pem_public = generate_ed25519_key_pair()
+            privkey = Ed25519PrivateKey.generate()
         else:
-            pem_private, pem_public = generate_rsa_key_pair()
-        self.stdout.write(pem_private)
-        self.stdout.write(pem_public)
+            privkey = RSAPrivateKey.generate()
+        self.stdout.write(privkey.as_pem.decode())
+        self.stdout.write(privkey.public_key.as_pem.decode())

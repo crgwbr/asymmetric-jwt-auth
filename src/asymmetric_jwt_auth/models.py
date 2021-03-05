@@ -3,20 +3,23 @@ from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+from django.utils.encoding import force_str, force_bytes
 from jwt import PyJWKClient
-from .token import load_serialized_public_key
+from . import keys, tokens
 
 
-def validate_public_key(keystr):
+
+def validate_public_key(keystr: str) -> None:
     """
-    Check that the given value is a valid RSA Public key in either PEM or OpenSSH format. If it is invalid,
+    Check that the given value is a valid public key in either PEM or OpenSSH format. If it is invalid,
     raises ``django.core.exceptions.ValidationError``.
     """
-    exc, key = load_serialized_public_key(keystr)
+    key_bytes = keystr.encode()
+    exc, key = keys.PublicKey.load_serialized_public_key(key_bytes)
     is_valid = (exc is None) and (key is not None)
     if not is_valid:
         raise ValidationError('Public key is invalid: %s' % exc)
+
 
 
 class PublicKey(models.Model):
@@ -34,7 +37,7 @@ class PublicKey(models.Model):
 
     #: Key text in either PEM or OpenSSH format.
     key = models.TextField(_("Public Key"),
-        help_text=_("The user's RSA public key"),
+        help_text=_("The user's RSA/Ed25519 public key"),
         validators=[validate_public_key])
 
     #: Comment describing the key. Use this to note what system is authenticating with the key, when it was last rotated, etc.
@@ -52,33 +55,28 @@ class PublicKey(models.Model):
         verbose_name = _("Public Key")
         verbose_name_plural = _("Public Keys")
 
-    def get_allowed_algorithms(self):
-        pubkey = self.get_loaded_key()
-        if isinstance(pubkey, Ed25519PublicKey):
-            return [
-                'EdDSA',
-            ]
-        return [
-            'RS384',
-            'RS256',
-            'RS512',
-        ]
 
-    def get_loaded_key(self):
-        exc, key = load_serialized_public_key(self.key)
-        if exc is not None and key is None:
+    def get_key(self) -> keys.FacadePublicKey:
+        key_bytes = force_bytes(self.key)
+        exc, key = keys.PublicKey.load_serialized_public_key(key_bytes)
+        if key is None:
+            if exc is None:  # pragma: no cover
+                raise ValueError("Failed to load key")
             raise exc
         return key
 
-    def update_last_used_datetime(self):
+
+    def update_last_used_datetime(self) -> None:
         self.last_used_on = timezone.now()
         self.save(update_fields=["last_used_on"])
 
-    def save(self, *args, **kwargs):
-        key_parts = self.key.split(' ')
+
+    def save(self, *args, **kwargs) -> None:
+        key_parts = force_str(self.key).split(' ')
         if len(key_parts) == 3 and not self.comment:
             self.comment = key_parts.pop()
         super(PublicKey, self).save(*args, **kwargs)
+
 
 
 class JWKSEndpointTrust(models.Model):
@@ -106,9 +104,10 @@ class JWKSEndpointTrust(models.Model):
 
 
     @property
-    def jwks_client(self):
+    def jwks_client(self) -> PyJWKClient:
         return PyJWKClient(self.jwks_url)
 
 
-    def get_signing_key(self, claim):
-        return self.jwks_client.get_signing_key_from_jwt(claim)
+    def get_signing_key(self, untrusted_token: tokens.UntrustedToken) -> keys.PublicKey:
+        jwk = self.jwks_client.get_signing_key_from_jwt(untrusted_token.token)
+        return keys.PublicKey.from_cryptography_pubkey(jwk.key)
