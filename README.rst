@@ -4,8 +4,11 @@ Asymmetric JWT Authentication
 .. image:: https://img.shields.io/pypi/v/asymmetric_jwt_auth.svg
     :target: https://pypi.python.org/pypi/asymmetric_jwt_auth
 
-.. image:: https://travis-ci.org/crgwbr/asymmetric-jwt-auth.svg
-    :target: https://travis-ci.org/crgwbr/asymmetric-jwt-auth
+.. image:: https://gitlab.com/crgwbr/asymmetric_jwt_auth/badges/master/pipeline.svg
+    :target: https://gitlab.com/crgwbr/asymmetric_jwt_auth/-/commits/master
+
+.. image:: https://gitlab.com/crgwbr/asymmetric_jwt_auth/badges/master/coverage.svg
+    :target: https://gitlab.com/crgwbr/asymmetric_jwt_auth/-/commits/master
 
 
 What?
