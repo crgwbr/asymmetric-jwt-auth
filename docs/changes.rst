@@ -7,6 +7,7 @@ Change Log
 - Updated cryptography dependency to ``>=3.4.6``.
 - Updated PyJWT dependency to ``>=2.0.1``.
 - Added support for EdDSA signing and verification.
+- Added support for obtaining public keys via JWKS endpoints.
 
 0.5.0
 -----
