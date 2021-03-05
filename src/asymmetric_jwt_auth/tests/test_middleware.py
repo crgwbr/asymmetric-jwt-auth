@@ -213,7 +213,6 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
 
     @mock.patch('asymmetric_jwt_auth.models.PyJWKClient.fetch_data')
     def test_missing_data(self, mock_fetch_data):
-        print(self.key_rsa.public_key.as_jwk)
         mock_fetch_data.return_value = {
             "keys": [
                 self.key_rsa.public_key.as_jwk,
