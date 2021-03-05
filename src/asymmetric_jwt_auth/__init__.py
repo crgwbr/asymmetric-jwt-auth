@@ -22,6 +22,12 @@ default_settings = {
         'asymmetric_jwt_auth.repos.django.DjangoPublicKeyListRepository',
         'asymmetric_jwt_auth.repos.django.DjangoJWKSRepository',
     ],
+
+    #: List of public keys that should be advertised on our JWKS endpoint.
+    'SIGNING_PUBLIC_KEYS': [],
+
+    #: Cache TTL for the JWKS key view
+    'JWKS_VIEW_TTL': (60 * 5),
 }
 
 
