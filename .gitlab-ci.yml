@@ -13,6 +13,7 @@ test:
   script:
     - pip install tox
     - tox --skip-missing-interpreters
+  coverage: '/^TOTAL.+?(\d+\%)$/'
   parallel:
     matrix:
       - IMAGE:
