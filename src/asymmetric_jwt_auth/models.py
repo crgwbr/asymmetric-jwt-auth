@@ -70,6 +70,7 @@ class PublicKey(models.Model):
         self.last_used_on = timezone.now()
         self.save(update_fields=["last_used_on"])
 
+    created = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs) -> None:
         key_parts = force_str(self.key).split(' ')
