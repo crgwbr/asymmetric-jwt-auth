@@ -44,5 +44,5 @@ types-enum34==0.1.5
 types-ipaddress==0.1.2
 typing==3.7.4.3
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.5
 versiontag==1.2.0
