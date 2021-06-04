@@ -6,7 +6,7 @@ cffi==1.14.5
 chardet==4.0.0
 coverage==5.5
 cryptography==3.4.6
-Django==3.1.7
+Django==3.1.9
 django-stubs==1.7.0
 docutils==0.16
 flake8==3.8.4
