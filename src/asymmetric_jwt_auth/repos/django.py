@@ -7,7 +7,6 @@ from ..tokens import UntrustedToken, Token
 from .. import models
 
 
-
 class DjangoUserRepository(BaseUserRepository):
     def __init__(self):
         self.User = get_user_model()
@@ -23,25 +22,26 @@ class DjangoUserRepository(BaseUserRepository):
         return None
 
 
-
 class DjangoPublicKeyListRepository(BasePublicKeyRepository):
-    def attempt_to_verify_token(self, user: User, untrusted_token: UntrustedToken) -> Union[Token, None]:
+    def attempt_to_verify_token(
+        self, user: User, untrusted_token: UntrustedToken
+    ) -> Union[Token, None]:
         """
         Attempt to verify a JWT for the given user using public keys from the PublicKey model.
         """
         for user_key in models.PublicKey.objects.filter(user=user).all():
             public_key = user_key.get_key()
-            token = untrusted_token.verify(
-                public_key=public_key)
+            token = untrusted_token.verify(public_key=public_key)
             if token:
                 user_key.update_last_used_datetime()
                 return token
         return None
 
 
-
 class DjangoJWKSRepository(BasePublicKeyRepository):
-    def attempt_to_verify_token(self, user: User, untrusted_token: UntrustedToken) -> Union[Token, None]:
+    def attempt_to_verify_token(
+        self, user: User, untrusted_token: UntrustedToken
+    ) -> Union[Token, None]:
         """
         Attempt to verify a JWT for the given user using public keys the user's JWKS endpoint.
         """
@@ -52,8 +52,7 @@ class DjangoJWKSRepository(BasePublicKeyRepository):
             public_key = jwks_endpoint.get_signing_key(untrusted_token)
         except PyJWKClientError:
             return None
-        token = untrusted_token.verify(
-            public_key=public_key)
+        token = untrusted_token.verify(public_key=public_key)
         if token:
             return token
         return None

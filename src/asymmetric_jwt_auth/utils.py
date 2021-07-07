@@ -17,8 +17,8 @@ def long_to_base64(n: int, mlen: int = 0) -> str:
         _len = mlen - len(bys)
         if _len:
             bys = [0] * _len + bys
-    data = struct.pack('%sB' % len(bys), *bys)
+    data = struct.pack("%sB" % len(bys), *bys)
     if not len(data):
-        data = b'\x00'
-    s = base64.urlsafe_b64encode(data).rstrip(b'=')
+        data = b"\x00"
+    s = base64.urlsafe_b64encode(data).rstrip(b"=")
     return s.decode("ascii")

@@ -5,7 +5,6 @@ from .keys import PublicKey
 
 
 class JWKSEndpointView(View):
-
     def get(self, request):
         keys = self.list_pub_keys()
         data = {
@@ -13,10 +12,9 @@ class JWKSEndpointView(View):
         }
         return JsonResponse(data)
 
-
     def list_pub_keys(self):
         keys = []
-        for _key in get_setting('SIGNING_PUBLIC_KEYS'):
+        for _key in get_setting("SIGNING_PUBLIC_KEYS"):
             if isinstance(_key, PublicKey):
                 keys.append(_key)
             else:

@@ -18,13 +18,11 @@ class JWTAuthMiddleware:
         self.user_repo = get_user_repository()
         self.key_repos = get_public_key_repositories()
 
-
     def __call__(self, request: HttpRequest) -> HttpResponse:
         # Attempt to authorize the request
         self.authorize_request(request)
         # Continue with the request
         return self.get_response(request)
-
 
     def authorize_request(self, request: HttpRequest) -> HttpRequest:
         """
@@ -37,16 +35,16 @@ class JWTAuthMiddleware:
         :param request: Django Request instance
         """
         # Check for presence of auth header
-        if 'HTTP_AUTHORIZATION' not in request.META:
+        if "HTTP_AUTHORIZATION" not in request.META:
             return request
 
         # Ensure this auth header was meant for us (it has the JWT auth method).
         try:
-            method, header_data = request.META['HTTP_AUTHORIZATION'].split(' ', 1)
+            method, header_data = request.META["HTTP_AUTHORIZATION"].split(" ", 1)
         except ValueError:
             return request
 
-        auth_method_setting = get_setting('AUTH_METHOD')
+        auth_method_setting = get_setting("AUTH_METHOD")
         if method.upper() != auth_method_setting:
             return request
 
@@ -73,7 +71,7 @@ class JWTAuthMiddleware:
             return request
 
         # Assign the user to the request
-        logger.debug('Successfully authenticated %s using JWT', user.username)
+        logger.debug("Successfully authenticated %s using JWT", user.username)
         request._dont_enforce_csrf_checks = True
         request.user = user
         return request

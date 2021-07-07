@@ -12,7 +12,6 @@ class NullNonceBackend(BaseNonceBackend):
         """
         return True
 
-
     def log_used_nonce(self, username: str, timestamp: int, nonce: str) -> None:
         """
         Log a nonce as being used, and therefore henceforth invalid.

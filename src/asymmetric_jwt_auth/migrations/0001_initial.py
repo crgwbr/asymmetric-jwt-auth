@@ -13,11 +13,26 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='PublicKey',
+            name="PublicKey",
             fields=[
-                ('id', models.AutoField(serialize=False, auto_created=True, verbose_name='ID', primary_key=True)),
-                ('key', models.TextField(help_text="The user's RSA public key")),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, related_name='public_keys', on_delete=models.CASCADE)),
+                (
+                    "id",
+                    models.AutoField(
+                        serialize=False,
+                        auto_created=True,
+                        verbose_name="ID",
+                        primary_key=True,
+                    ),
+                ),
+                ("key", models.TextField(help_text="The user's RSA public key")),
+                (
+                    "user",
+                    models.ForeignKey(
+                        to=settings.AUTH_USER_MODEL,
+                        related_name="public_keys",
+                        on_delete=models.CASCADE,
+                    ),
+                ),
             ],
         ),
     ]

@@ -10,39 +10,78 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('asymmetric_jwt_auth', '0004_auto_20191104_1628'),
+        ("asymmetric_jwt_auth", "0004_auto_20191104_1628"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='publickey',
-            options={'verbose_name': 'Public Key', 'verbose_name_plural': 'Public Keys'},
+            name="publickey",
+            options={
+                "verbose_name": "Public Key",
+                "verbose_name_plural": "Public Keys",
+            },
         ),
         migrations.AlterField(
-            model_name='publickey',
-            name='comment',
-            field=models.CharField(blank=True, help_text='Comment describing this key', max_length=100, verbose_name='Comment'),
+            model_name="publickey",
+            name="comment",
+            field=models.CharField(
+                blank=True,
+                help_text="Comment describing this key",
+                max_length=100,
+                verbose_name="Comment",
+            ),
         ),
         migrations.AlterField(
-            model_name='publickey',
-            name='key',
-            field=models.TextField(help_text="The user's RSA public key", validators=[asymmetric_jwt_auth.models.validate_public_key], verbose_name='Public Key'),
+            model_name="publickey",
+            name="key",
+            field=models.TextField(
+                help_text="The user's RSA public key",
+                validators=[asymmetric_jwt_auth.models.validate_public_key],
+                verbose_name="Public Key",
+            ),
         ),
         migrations.AlterField(
-            model_name='publickey',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='public_keys', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="publickey",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="public_keys",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.CreateModel(
-            name='JWKSEndpointTrust',
+            name="JWKSEndpointTrust",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('jwks_url', models.URLField(help_text='e.g. https://dev-87evx9ru.auth0.com/.well-known/jwks.json', verbose_name='JSON Web Key Set (JWKS) URL')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='jwks_endpoint', to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "jwks_url",
+                    models.URLField(
+                        help_text="e.g. https://dev-87evx9ru.auth0.com/.well-known/jwks.json",
+                        verbose_name="JSON Web Key Set (JWKS) URL",
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="jwks_endpoint",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'JSON Web Key Set',
-                'verbose_name_plural': 'JSON Web Key Sets',
+                "verbose_name": "JSON Web Key Set",
+                "verbose_name_plural": "JSON Web Key Sets",
             },
         ),
     ]

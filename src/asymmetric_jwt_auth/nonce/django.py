@@ -19,7 +19,6 @@ class DjangoCacheNonceBackend(BaseNonceBackend):
         used = cache.get(key, set([]))
         return nonce not in used
 
-
     def log_used_nonce(self, username: str, timestamp: int, nonce: str) -> None:
         """
         Log a nonce as being used, and therefore henceforth invalid.
@@ -27,15 +26,16 @@ class DjangoCacheNonceBackend(BaseNonceBackend):
         key = self._create_nonce_key(username, timestamp)
         used = cache.get(key, set([]))
         used.add(nonce)
-        timestamp_tolerance = getattr(settings, 'ASYMMETRIC_JWT_AUTH', default_settings)['TIMESTAMP_TOLERANCE']
+        timestamp_tolerance = getattr(
+            settings, "ASYMMETRIC_JWT_AUTH", default_settings
+        )["TIMESTAMP_TOLERANCE"]
         cache.set(key, used, timestamp_tolerance * 2)
-
 
     def _create_nonce_key(self, username: str, timestamp: int) -> str:
         """
         Create and return the cache key for storing nonces
         """
-        return '%s-nonces-%s-%s' % (
+        return "%s-nonces-%s-%s" % (
             self.__class__.__name__,
             username,
             timestamp,

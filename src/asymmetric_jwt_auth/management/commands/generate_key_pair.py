@@ -4,8 +4,8 @@ from asymmetric_jwt_auth.keys import (
     Ed25519PrivateKey,
 )
 
-TYPE_RSA = 'RSA'
-TYPE_ED25519 = 'Ed25519'
+TYPE_RSA = "RSA"
+TYPE_ED25519 = "Ed25519"
 TYPE_CHOICES = [
     TYPE_RSA,
     TYPE_ED25519,
@@ -16,9 +16,7 @@ class Command(BaseCommand):
     help = "Generate a public / private RSA key pair"
 
     def add_arguments(self, parser):
-        parser.add_argument('-t', '--keytype',
-            choices=TYPE_CHOICES,
-            default=TYPE_RSA)
+        parser.add_argument("-t", "--keytype", choices=TYPE_CHOICES, default=TYPE_RSA)
 
     def handle(self, *args, keytype=TYPE_RSA, **options):
         if keytype == TYPE_ED25519:

@@ -19,12 +19,14 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../'))
-sys.path.insert(0, os.path.abspath('../src/'))
-sys.path.insert(0, os.path.abspath('../sandbox/'))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'sandbox.settings'
+sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../src/"))
+sys.path.insert(0, os.path.abspath("../sandbox/"))
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "sandbox.settings"
 import django  # NOQA
+
 django.setup()
 
 
@@ -38,27 +40,27 @@ django.setup()
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.viewcode',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'asymmetric-jwt-auth'
-copyright = '2021, Craig Weber <crgwbr@gmail.com>'
-author = 'Craig Weber <crgwbr@gmail.com>'
+project = "asymmetric-jwt-auth"
+copyright = "2021, Craig Weber <crgwbr@gmail.com>"
+author = "Craig Weber <crgwbr@gmail.com>"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -66,6 +68,7 @@ author = 'Craig Weber <crgwbr@gmail.com>'
 #
 # The short X.Y version.
 from versiontag import get_version  # NOQA
+
 version = get_version(pypi=True)
 # The full version, including alpha/beta/rc tags.
 release = get_version(pypi=True)
@@ -80,10 +83,10 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -95,6 +98,7 @@ todo_include_todos = False
 # a list of builtin themes.
 #
 import sphinx_rtd_theme  # NOQA
+
 html_theme = "sphinx_rtd_theme"
 html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
@@ -107,13 +111,13 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'asymmetric-jwt-authdoc'
+htmlhelp_basename = "asymmetric-jwt-authdoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -122,15 +126,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -140,8 +141,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'asymmetric-jwt-auth.tex', 'asymmetric-jwt-auth Documentation',
-     'Craig Weber', 'manual'),
+    (
+        master_doc,
+        "asymmetric-jwt-auth.tex",
+        "asymmetric-jwt-auth Documentation",
+        "Craig Weber",
+        "manual",
+    ),
 ]
 
 
@@ -150,8 +156,13 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'asymmetric-jwt-auth', 'asymmetric-jwt-auth Documentation',
-     [author], 1)
+    (
+        master_doc,
+        "asymmetric-jwt-auth",
+        "asymmetric-jwt-auth Documentation",
+        [author],
+        1,
+    )
 ]
 
 
@@ -161,7 +172,13 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'asymmetric-jwt-auth', 'asymmetric-jwt-auth Documentation',
-     author, 'asymmetric-jwt-auth', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "asymmetric-jwt-auth",
+        "asymmetric-jwt-auth Documentation",
+        author,
+        "asymmetric-jwt-auth",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
