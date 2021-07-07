@@ -7,18 +7,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('asymmetric_jwt_auth', '0003_auto_20151112_1547'),
+        ("asymmetric_jwt_auth", "0003_auto_20151112_1547"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publickey',
-            name='last_used_on',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Last Used On'),
+            model_name="publickey",
+            name="last_used_on",
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name="Last Used On"
+            ),
         ),
         migrations.AlterField(
-            model_name='publickey',
-            name='key',
-            field=models.TextField(help_text="The user's RSA public key", validators=[asymmetric_jwt_auth.models.validate_public_key]),
+            model_name="publickey",
+            name="key",
+            field=models.TextField(
+                help_text="The user's RSA public key",
+                validators=[asymmetric_jwt_auth.models.validate_public_key],
+            ),
         ),
     ]
