@@ -14,7 +14,7 @@ packages = find_packages("src")
 install_requires = [
     "PyJWT>=2.0.1",
     "cryptography>=3.4.6",
-    "Django>=2.2",
+    "Django>=3.2",
 ]
 
 extras_require = {

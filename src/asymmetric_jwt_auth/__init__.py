@@ -1,8 +1,6 @@
 from django.conf import settings
 import copy
 
-default_app_config = "asymmetric_jwt_auth.apps.JWTAuthConfig"
-
 #: Default settings. Override using a dictionary named ASYMMETRIC_JWT_AUTH in Django's settings.py.
 default_settings = {
     #: Auth method searched for in the prefix of the Authentication header. Similar to ``Bearer`` or ``Basic``.
