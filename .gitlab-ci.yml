@@ -28,13 +28,12 @@ test:
   coverage: '/^TOTAL.+?(\d+\%)$/'
   parallel:
     matrix:
-      - IMAGE:
-          - python:3.7
-          - python:3.8
-          - python:3.9
+      - IMAGE: python:3.8
+      - IMAGE: python:3.9
+      - IMAGE: python:3.10
 
 publish_pkg:
-  image: python:3.9
+  image: python:3
   stage: release
   rules:
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED
