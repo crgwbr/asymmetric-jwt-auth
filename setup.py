@@ -61,7 +61,7 @@ setup(
     ],
     author="Craig Weber",
     author_email="crgwbr@gmail.com",
-    url="https://github.com/crgwbr/asymmetric-jwt-auth",
+    url="https://gitlab.com/crgwbr/asymmetric_jwt_auth",
     license="ISC",
     package_dir={"": "src"},
     packages=packages,
