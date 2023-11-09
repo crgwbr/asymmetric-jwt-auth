@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "asymmetric_jwt_auth"
+version = "1.0.0"
+description = "Asymmetric key based authentication for HTTP APIs"
+authors = ["Craig Weber <crgwbr@gmail.com>"]
+maintainers = ["Craig Weber <crgwbr@gmail.com>"]
+readme = "README.rst"
+homepage = "https://gitlab.com/crgwbr/asymmetric_jwt_auth"
+repository = "https://gitlab.com/crgwbr/asymmetric_jwt_auth"
+license = "ISC"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Django",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: ISC License (ISCL)",
+]
+packages = [
+    { include = "asymmetric_jwt_auth", from = "src" },
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.10"
+cryptography = ">=3.4.6"
+Django = ">=3.2"
+PyJWT = ">=2.0.1"
+
+[tool.poetry.group.dev.dependencies]
+coverage = ">=5.5"
+django-stubs = ">=1.7.0"
+flake8 = ">=3.2.1"
+freezegun = ">=1.1.0"
+mypy = ">=0.812"
+sphinx-rtd-theme = ">=0.5.1"
+sphinx = ">=3.5.1"
+types-cryptography = ">=0.1.1"
+typing = ">=3.7.4.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
