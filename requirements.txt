@@ -37,7 +37,7 @@ sphinxcontrib-htmlhelp==1.0.3
 sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
-sqlparse==0.4.1
+sqlparse==0.4.2
 typed-ast==1.4.2
 types-cryptography==0.1.1
 types-enum34==0.1.5
