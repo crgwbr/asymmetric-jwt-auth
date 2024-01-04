@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("asymmetric_jwt_auth", "0001_initial"),
     ]
