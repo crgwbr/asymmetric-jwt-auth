@@ -1,4 +1,12 @@
 repos:
+  - repo: https://gitlab.com/thelabnyc/thelab-pre-commit-hooks
+    rev: r0.0.1
+    hooks:
+      - id: update-copyright-year
+        args:
+          - --file=LICENSE.md
+          - --pattern=(?P<year>\d{4})\s+Craig Weber
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
