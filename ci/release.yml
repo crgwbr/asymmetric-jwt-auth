@@ -31,7 +31,8 @@ publish-job:
     # Retrieve the OIDC token from GitLab CI/CD, and exchange it for a PyPI
     # API token
     - oidc_token=$(python -m id -v pypi)
-    - resp=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${oidc_token}\"}")
+    - resp=$(curl -s -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${oidc_token}\"}")
+    - jq <<< "${resp}"
     - api_token=$(jq --raw-output '.token' <<< "${resp}")
 
     # Publish to PyPI
