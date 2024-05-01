@@ -26,26 +26,24 @@ publish-job:
   script:
     # Install dependencies
     - apt update && apt install -y jq
-    - python -m pip install twine id
+    - python -m pip install -U twine id
 
     # Retrieve the OIDC token from GitLab CI/CD, and exchange it for a PyPI
     # API token
-    - oidc_token=$(python -m id PYPI)
+    - oidc_token=$(python -m id -v PYPI)
     - resp=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${oidc_token}\"}")
     - api_token=$(jq --raw-output '.token' <<< "${resp}")
 
     # Publish to PyPI
+    - export TWINE_USERNAME=__token__
+    - export TWINE_PASSWORD=${api_token}
     - python -m twine upload
-        --username __token__
-        --password "${api_token}"
         dist/*
 
     # Publish to Gitlab
     - export TWINE_USERNAME=gitlab-ci-token
     - export TWINE_PASSWORD=${CI_JOB_TOKEN}
     - python -m twine upload
-        --username gitlab-ci-token
-        --password "${CI_JOB_TOKEN}"
         --repository-url "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi"
         dist/*
 
