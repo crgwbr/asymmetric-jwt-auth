@@ -7,17 +7,10 @@ cache:
   paths:
     - $HOME/.cache/pip
 
-precommit:
-  stage: test
-  image: python:3
-  variables:
-    PRE_COMMIT_HOME: ${CI_PROJECT_DIR}/.cache/pre-commit
-  script:
-    - pip3 install pre-commit
-    - pre-commit run --all-files
-  cache:
-    paths:
-      - ${PRE_COMMIT_HOME}
+include:
+  - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.0.1
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-gitlab-release@0.0.1
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-to-pypi@0.0.1
 
 test:
   stage: test
@@ -34,6 +27,3 @@ test:
         TOX_SKIP_ENV: "^(?!py311-)"
       - IMAGE: py312
         TOX_SKIP_ENV: "^(?!py312-)"
-
-include:
-  - local: /ci/release.yml
