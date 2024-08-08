@@ -23,3 +23,8 @@ repos:
     hooks:
       - id: black
         types: [file, python]
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.28.0
+    hooks:
+      - id: commitizen
