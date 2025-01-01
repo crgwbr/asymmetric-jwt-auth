@@ -1,6 +1,6 @@
 ISC License
 
-Copyright (c) 2015 - 2024 Craig Weber <crgwbr@gmail.com>
+Copyright (c) 2015 - 2025 Craig Weber <crgwbr@gmail.com>
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
