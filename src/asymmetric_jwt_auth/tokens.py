@@ -21,7 +21,7 @@ class Token:
         self.username = username
         self.timestamp = int(time.time()) if timestamp is None else timestamp
 
-    def create_auth_header(self, private_key: keys.PrivateKey) -> str:
+    def create_auth_header(self, private_key: keys.FacadePrivateKey) -> str:
         """
         Create an HTTP Authorization header
         """
@@ -30,7 +30,7 @@ class Token:
         token = self.sign(private_key)
         return f"{auth_method} {token}"
 
-    def sign(self, private_key: keys.PrivateKey) -> str:
+    def sign(self, private_key: keys.FacadePrivateKey) -> str:
         """
         Create and return signed authentication JWT
         """
@@ -74,9 +74,12 @@ class UntrustedToken:
         :return: Username
         """
         unverified_data = jwt.decode(self.token, options={"verify_signature": False})
-        return unverified_data.get("username")
+        username = unverified_data.get("username")
+        if isinstance(username, str):
+            return username
+        return None
 
-    def verify(self, public_key: keys.PublicKey) -> Union[None, Token]:
+    def verify(self, public_key: keys.FacadePublicKey) -> Union[None, Token]:
         """
         Verify the validity of the given JWT using the given public key.
         """

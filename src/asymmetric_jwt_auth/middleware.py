@@ -72,6 +72,6 @@ class JWTAuthMiddleware:
 
         # Assign the user to the request
         logger.debug("Successfully authenticated %s using JWT", user.username)
-        request._dont_enforce_csrf_checks = True
+        request._dont_enforce_csrf_checks = True  # type:ignore[attr-defined]
         request.user = user
         return request

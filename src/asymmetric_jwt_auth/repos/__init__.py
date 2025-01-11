@@ -5,7 +5,7 @@ from .base import BaseUserRepository, BasePublicKeyRepository
 
 
 def get_user_repository() -> BaseUserRepository:
-    Repo = import_string(get_setting("USER_REPOSITORY"))
+    Repo: type[BaseUserRepository] = import_string(get_setting("USER_REPOSITORY"))
     return Repo()
 
 

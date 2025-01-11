@@ -1,3 +1,4 @@
+from typing import Any
 from django.conf import settings
 import copy
 
@@ -23,7 +24,7 @@ default_settings = {
 }
 
 
-def get_setting(name: str):
+def get_setting(name: str) -> Any:
     _settings = copy.deepcopy(default_settings)
     _settings.update(getattr(settings, "ASYMMETRIC_JWT_AUTH", {}))
     return _settings[name]
