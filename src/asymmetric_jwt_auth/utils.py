@@ -1,6 +1,6 @@
 from typing import List
-import struct
 import base64
+import struct
 
 
 def long2intarr(long_int: int) -> List[int]:

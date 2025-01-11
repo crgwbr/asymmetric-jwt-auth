@@ -1,6 +1,8 @@
 from typing import Union
+
 from django.contrib.auth.models import User
-from ..tokens import UntrustedToken, Token
+
+from ..tokens import Token, UntrustedToken
 
 
 class BaseUserRepository:

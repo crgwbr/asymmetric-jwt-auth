@@ -1,9 +1,11 @@
 from typing import Optional, Union
-from .nonce import get_nonce_backend
-from . import keys, get_setting
-import jwt
-import time
 import logging
+import time
+
+import jwt
+
+from . import get_setting, keys
+from .nonce import get_nonce_backend
 
 logger = logging.getLogger(__name__)
 

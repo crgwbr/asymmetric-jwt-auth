@@ -1,11 +1,13 @@
+from datetime import datetime, timedelta
 from unittest.mock import patch
+
 from django.contrib.auth.models import User
 from django.test import TestCase, override_settings
 from freezegun import freeze_time
-from datetime import datetime, timedelta
-from .. import tokens, keys
-from . import data
 import jwt
+
+from .. import keys, tokens
+from . import data
 
 
 class TokenToken(TestCase):

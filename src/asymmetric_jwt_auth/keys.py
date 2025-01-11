@@ -1,11 +1,11 @@
-from typing import Any, Union
-from cryptography.hazmat.primitives.asymmetric import rsa, ed25519
-from cryptography.hazmat.primitives import serialization
-from typing import Union, Generic, TypeVar, List, Optional, Tuple
-from .utils import long_to_base64
-import os
+from typing import Any, Generic, List, Optional, Tuple, TypeVar, Union
 import hashlib
+import os
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ed25519, rsa
+
+from .utils import long_to_base64
 
 CryptoPrivateKey = Union[rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey]
 CryptoPublicKey = Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey]

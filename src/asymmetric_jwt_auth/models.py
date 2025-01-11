@@ -1,11 +1,13 @@
 from typing import Any
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.core.exceptions import ValidationError
+from django.utils.encoding import force_bytes, force_str
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_str, force_bytes
 from jwt import PyJWKClient
+
 from . import keys, tokens
 
 

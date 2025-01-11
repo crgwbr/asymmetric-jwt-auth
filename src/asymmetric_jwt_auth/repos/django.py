@@ -1,10 +1,12 @@
 from typing import Union
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from jwt.exceptions import PyJWKClientError
-from .base import BaseUserRepository, BasePublicKeyRepository
-from ..tokens import UntrustedToken, Token
+
 from .. import models
+from ..tokens import Token, UntrustedToken
+from .base import BasePublicKeyRepository, BaseUserRepository
 
 
 class DjangoUserRepository(BaseUserRepository):

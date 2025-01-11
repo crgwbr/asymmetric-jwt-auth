@@ -1,9 +1,11 @@
-from django.core.cache import cache
-from django.test import TestCase, Client, override_settings
-from django.urls import reverse
-from . import data
-from ..keys import PublicKey
 import json
+
+from django.core.cache import cache
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+
+from ..keys import PublicKey
+from . import data
 
 
 class JWKSViewTest(TestCase):

@@ -1,6 +1,7 @@
 from typing import Any
-from django.conf import settings
 import copy
+
+from django.conf import settings
 
 #: Default settings. Override using a dictionary named ASYMMETRIC_JWT_AUTH in Django's settings.py.
 default_settings = {

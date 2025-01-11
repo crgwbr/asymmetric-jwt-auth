@@ -58,3 +58,7 @@ pre_bump_hooks = [
 post_bump_hooks = [
     "git push origin master $CZ_POST_CURRENT_TAG_VERSION"
 ]
+
+[tool.isort]
+profile = "black"
+from_first = true

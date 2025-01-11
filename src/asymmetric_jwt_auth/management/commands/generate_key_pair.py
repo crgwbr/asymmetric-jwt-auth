@@ -1,11 +1,9 @@
 from argparse import ArgumentParser
 from typing import Any
+
 from django.core.management.base import BaseCommand
-from asymmetric_jwt_auth.keys import (
-    FacadePrivateKey,
-    RSAPrivateKey,
-    Ed25519PrivateKey,
-)
+
+from asymmetric_jwt_auth.keys import Ed25519PrivateKey, FacadePrivateKey, RSAPrivateKey
 
 TYPE_RSA = "RSA"
 TYPE_ED25519 = "Ed25519"
