@@ -1,14 +1,16 @@
 from typing import Union
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from jwt.exceptions import PyJWKClientError
-from .base import BaseUserRepository, BasePublicKeyRepository
-from ..tokens import UntrustedToken, Token
+
 from .. import models
+from ..tokens import Token, UntrustedToken
+from .base import BasePublicKeyRepository, BaseUserRepository
 
 
 class DjangoUserRepository(BaseUserRepository):
-    def __init__(self):
+    def __init__(self) -> None:
         self.User = get_user_model()
 
     def get_user(self, username: str) -> Union[None, User]:
@@ -24,7 +26,9 @@ class DjangoUserRepository(BaseUserRepository):
 
 class DjangoPublicKeyListRepository(BasePublicKeyRepository):
     def attempt_to_verify_token(
-        self, user: User, untrusted_token: UntrustedToken
+        self,
+        user: User,
+        untrusted_token: UntrustedToken,
     ) -> Union[Token, None]:
         """
         Attempt to verify a JWT for the given user using public keys from the PublicKey model.
@@ -40,7 +44,9 @@ class DjangoPublicKeyListRepository(BasePublicKeyRepository):
 
 class DjangoJWKSRepository(BasePublicKeyRepository):
     def attempt_to_verify_token(
-        self, user: User, untrusted_token: UntrustedToken
+        self,
+        user: User,
+        untrusted_token: UntrustedToken,
     ) -> Union[Token, None]:
         """
         Attempt to verify a JWT for the given user using public keys the user's JWKS endpoint.

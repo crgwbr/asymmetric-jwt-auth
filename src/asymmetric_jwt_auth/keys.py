@@ -1,10 +1,11 @@
-from cryptography.hazmat.primitives.asymmetric import rsa, ed25519
-from cryptography.hazmat.primitives import serialization
-from typing import Union, Generic, TypeVar, List, Optional, Tuple
-from .utils import long_to_base64
-import os
+from typing import Any, Generic, List, Optional, Tuple, TypeVar, Union
 import hashlib
+import os
 
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ed25519, rsa
+
+from .utils import long_to_base64
 
 CryptoPrivateKey = Union[rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey]
 CryptoPublicKey = Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey]
@@ -12,8 +13,14 @@ CryptoPublicKey = Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey]
 FacadePrivateKey = Union["RSAPrivateKey", "Ed25519PrivateKey"]
 FacadePublicKey = Union["RSAPublicKey", "Ed25519PublicKey"]
 
-PrivateKeyType = TypeVar("PrivateKeyType", rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey)
-PublicKeyType = TypeVar("PublicKeyType", rsa.RSAPublicKey, ed25519.Ed25519PublicKey)
+PrivateKeyType = TypeVar(
+    "PrivateKeyType",
+    bound=Union[rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey],
+)
+PublicKeyType = TypeVar(
+    "PublicKeyType",
+    bound=Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey],
+)
 
 
 class PublicKey(Generic[PublicKeyType]):
@@ -71,7 +78,7 @@ class PublicKey(Generic[PublicKeyType]):
         return pem_bytes
 
     @property
-    def as_jwk(self) -> dict:  # pragma: no cover
+    def as_jwk(self) -> dict[str, str]:  # pragma: no cover
         """
         Return the public key in JWK format
         """
@@ -94,14 +101,14 @@ class PublicKey(Generic[PublicKeyType]):
         )
 
 
-class RSAPublicKey(PublicKey):
+class RSAPublicKey(PublicKey[rsa.RSAPublicKey]):
     """Represents an RSA public key"""
 
     def __init__(self, key: rsa.RSAPublicKey):
         self._key = key
 
     @property
-    def as_jwk(self) -> dict:
+    def as_jwk(self) -> dict[str, str]:
         """
         Return the public key in JWK format
         """
@@ -124,7 +131,7 @@ class RSAPublicKey(PublicKey):
         ]
 
 
-class Ed25519PublicKey(PublicKey):
+class Ed25519PublicKey(PublicKey[ed25519.Ed25519PublicKey]):
     """Represents an Ed25519 public key"""
 
     def __init__(self, key: ed25519.Ed25519PublicKey):
@@ -152,7 +159,9 @@ class PrivateKey(Generic[PrivateKeyType]):
 
     @classmethod
     def load_pem_from_file(
-        cls, filepath: os.PathLike, password: Optional[bytes] = None
+        cls,
+        filepath: os.PathLike[Any],
+        password: Optional[bytes] = None,
     ) -> FacadePrivateKey:
         """
         Load a PEM-format private key from disk.
@@ -170,8 +179,8 @@ class PrivateKey(Generic[PrivateKeyType]):
         return cls.from_cryptography_privkey(privkey)
 
     @property
-    def as_pem(self):
-        pem_bytes = self._key.private_bytes(
+    def as_pem(self) -> bytes:
+        pem_bytes = self._key.private_bytes(  # type:ignore[union-attr]
             serialization.Encoding.PEM,
             serialization.PrivateFormat.PKCS8,
             serialization.NoEncryption(),

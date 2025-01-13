@@ -1,10 +1,12 @@
 from unittest import mock
-from django.test import RequestFactory, TestCase
+
 from django.contrib.auth.models import User
-from ..models import PublicKey, JWKSEndpointTrust
+from django.test import RequestFactory, TestCase
+
+from ..keys import Ed25519PrivateKey, RSAPrivateKey
 from ..middleware import JWTAuthMiddleware
+from ..models import JWKSEndpointTrust, PublicKey
 from ..tokens import Token
-from ..keys import RSAPrivateKey, Ed25519PrivateKey
 
 
 class BaseMiddlewareTest(TestCase):

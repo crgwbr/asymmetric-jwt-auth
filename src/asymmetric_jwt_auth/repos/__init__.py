@@ -1,11 +1,13 @@
 from typing import List
+
 from django.utils.module_loading import import_string
+
 from .. import get_setting
-from .base import BaseUserRepository, BasePublicKeyRepository
+from .base import BasePublicKeyRepository, BaseUserRepository
 
 
 def get_user_repository() -> BaseUserRepository:
-    Repo = import_string(get_setting("USER_REPOSITORY"))
+    Repo: type[BaseUserRepository] = import_string(get_setting("USER_REPOSITORY"))
     return Repo()
 
 

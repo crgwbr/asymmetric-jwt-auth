@@ -1,10 +1,12 @@
 from typing import Callable
-from django.http import HttpRequest, HttpResponse
-from .nonce import get_nonce_backend
-from .tokens import UntrustedToken
-from .repos import get_user_repository, get_public_key_repositories
-from . import get_setting
 import logging
+
+from django.http import HttpRequest, HttpResponse
+
+from . import get_setting
+from .nonce import get_nonce_backend
+from .repos import get_public_key_repositories, get_user_repository
+from .tokens import UntrustedToken
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +74,6 @@ class JWTAuthMiddleware:
 
         # Assign the user to the request
         logger.debug("Successfully authenticated %s using JWT", user.username)
-        request._dont_enforce_csrf_checks = True
+        request._dont_enforce_csrf_checks = True  # type:ignore[attr-defined]
         request.user = user
         return request

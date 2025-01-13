@@ -1,5 +1,7 @@
-from django.conf import settings
+from typing import Any
 import copy
+
+from django.conf import settings
 
 #: Default settings. Override using a dictionary named ASYMMETRIC_JWT_AUTH in Django's settings.py.
 default_settings = {
@@ -23,7 +25,7 @@ default_settings = {
 }
 
 
-def get_setting(name: str):
+def get_setting(name: str) -> Any:
     _settings = copy.deepcopy(default_settings)
     _settings.update(getattr(settings, "ASYMMETRIC_JWT_AUTH", {}))
     return _settings[name]

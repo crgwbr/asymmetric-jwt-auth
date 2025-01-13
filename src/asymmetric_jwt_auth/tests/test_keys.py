@@ -1,8 +1,10 @@
-from django.test import TestCase
 from unittest import mock
+import os.path
+
+from django.test import TestCase
+
 from .. import keys
 from . import data
-import os.path
 
 
 class PublicKeyTest(TestCase):

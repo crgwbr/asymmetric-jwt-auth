@@ -1,10 +1,11 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 from django.utils import timezone
-from .. import models, keys, tokens
-from . import data
 import jwt
+
+from .. import keys, models, tokens
+from . import data
 
 
 class ValidatePublicKeyTest(TestCase):

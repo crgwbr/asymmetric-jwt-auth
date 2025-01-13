@@ -1,10 +1,13 @@
+from typing import Any
+
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.core.exceptions import ValidationError
+from django.utils.encoding import force_bytes, force_str
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import force_str, force_bytes
 from jwt import PyJWKClient
+
 from . import keys, tokens
 
 
@@ -70,7 +73,7 @@ class PublicKey(models.Model):
         self.last_used_on = timezone.now()
         self.save(update_fields=["last_used_on"])
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args: Any, **kwargs: Any) -> None:
         key_parts = force_str(self.key).split(" ")
         if len(key_parts) == 3 and not self.comment:
             self.comment = key_parts.pop()
@@ -108,6 +111,8 @@ class JWKSEndpointTrust(models.Model):
     def jwks_client(self) -> PyJWKClient:
         return PyJWKClient(self.jwks_url)
 
-    def get_signing_key(self, untrusted_token: tokens.UntrustedToken) -> keys.PublicKey:
+    def get_signing_key(
+        self, untrusted_token: tokens.UntrustedToken
+    ) -> keys.FacadePublicKey:
         jwk = self.jwks_client.get_signing_key_from_jwt(untrusted_token.token)
         return keys.PublicKey.from_cryptography_pubkey(jwk.key)
