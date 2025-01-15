@@ -1,3 +1,9 @@
+## v1.0.3 (2025-01-15)
+
+### Fix
+
+- enable PEP 740 attestations
+
 ## v1.0.2 (2025-01-14)
 
 ### Fix
