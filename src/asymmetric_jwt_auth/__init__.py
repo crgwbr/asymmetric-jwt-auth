@@ -15,8 +15,8 @@ default_settings = {
     "USER_REPOSITORY": "asymmetric_jwt_auth.repos.django.DjangoUserRepository",
     #: List of repository classes used to fetch public keys for a user
     "PUBLIC_KEY_REPOSITORIES": [
-        "asymmetric_jwt_auth.repos.django.DjangoPublicKeyListRepository",
         "asymmetric_jwt_auth.repos.django.DjangoJWKSRepository",
+        "asymmetric_jwt_auth.repos.django.DjangoPublicKeyListRepository",
     ],
     #: List of public keys that should be advertised on our JWKS endpoint.
     "SIGNING_PUBLIC_KEYS": [],
