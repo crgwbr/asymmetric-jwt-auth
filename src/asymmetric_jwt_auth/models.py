@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Any
 
 from django.conf import settings
@@ -21,6 +22,16 @@ def validate_public_key(keystr: str) -> None:
     is_valid = (exc is None) and (key is not None)
     if not is_valid:
         raise ValidationError("Public key is invalid: %s" % exc)
+
+
+@lru_cache
+def get_jwks_client(jwks_url: str) -> PyJWKClient:
+    """
+    LRU-cached constructor for PyJWKClient. Re-using instances of this (scoped
+    by the URL of course) allows the JWKS caching inside PyJWKClient to function
+    correctly.
+    """
+    return PyJWKClient(jwks_url)
 
 
 class PublicKey(models.Model):
@@ -112,7 +123,7 @@ class JWKSEndpointTrust(models.Model):
 
     @property
     def jwks_client(self) -> PyJWKClient:
-        return PyJWKClient(self.jwks_url)
+        return get_jwks_client(self.jwks_url)
 
     def get_signing_key(
         self, untrusted_token: tokens.UntrustedToken
