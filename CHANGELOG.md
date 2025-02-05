@@ -1,3 +1,15 @@
+## v1.1.0 (2025-02-05)
+
+### Feat
+
+- change default PUBLIC_KEY_REPOSITORIES order to prefer JWKS
+- support multiple JWKSEndpointTrusts per user
+- add last_used_on timestamp to JWKSEndpointTrust
+
+### Perf
+
+- cache JWKS keys for default time 5 mins
+
 ## v1.0.3 (2025-01-15)
 
 ### Fix
