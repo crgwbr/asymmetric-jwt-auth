@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "asymmetric_jwt_auth"
+name = "asymmetric-jwt-auth"
 version = "1.1.0"
 description = "Asymmetric key based authentication for HTTP APIs"
 authors = ["Craig Weber <crgwbr@gmail.com>"]
 maintainers = ["Craig Weber <crgwbr@gmail.com>"]
 readme = "README.rst"
-homepage = "https://gitlab.com/crgwbr/asymmetric_jwt_auth"
-repository = "https://gitlab.com/crgwbr/asymmetric_jwt_auth"
+homepage = "https://gitlab.com/thelabnyc/asymmetric-jwt-auth"
+repository = "https://gitlab.com/thelabnyc/asymmetric-jwt-auth"
 license = "ISC"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
