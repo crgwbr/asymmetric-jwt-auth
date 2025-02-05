@@ -51,14 +51,14 @@ class DjangoJWKSRepository(BasePublicKeyRepository):
         """
         Attempt to verify a JWT for the given user using public keys the user's JWKS endpoint.
         """
-        jwks_endpoint = models.JWKSEndpointTrust.objects.filter(user=user).first()
-        if not jwks_endpoint:
-            return None
-        try:
-            public_key = jwks_endpoint.get_signing_key(untrusted_token)
-        except PyJWKClientError:
-            return None
-        token = untrusted_token.verify(public_key=public_key)
-        if token:
-            return token
+        jwks_endpoints = models.JWKSEndpointTrust.objects.filter(user=user).all()
+        for jwks_endpoint in jwks_endpoints:
+            try:
+                public_key = jwks_endpoint.get_signing_key(untrusted_token)
+            except PyJWKClientError:
+                continue
+            token = untrusted_token.verify(public_key=public_key)
+            if token:
+                jwks_endpoint.update_last_used_datetime()
+                return token
         return None
