@@ -8,7 +8,7 @@ repos:
           - --pattern=(?P<year>\d{4})\s+Craig Weber
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-json
       - id: check-merge-conflict
