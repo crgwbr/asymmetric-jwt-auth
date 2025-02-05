@@ -60,5 +60,6 @@ class DjangoJWKSRepository(BasePublicKeyRepository):
             return None
         token = untrusted_token.verify(public_key=public_key)
         if token:
+            jwks_endpoint.update_last_used_datetime()
             return token
         return None

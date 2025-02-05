@@ -103,6 +103,9 @@ class JWKSEndpointTrust(models.Model):
         help_text=_("e.g. https://dev-87evx9ru.auth0.com/.well-known/jwks.json"),
     )
 
+    #: Date and time that key was last used for authenticating a request.
+    last_used_on = models.DateTimeField(_("Last Used On"), null=True, blank=True)
+
     class Meta:
         verbose_name = _("JSON Web Key Set")
         verbose_name_plural = _("JSON Web Key Sets")
@@ -116,3 +119,7 @@ class JWKSEndpointTrust(models.Model):
     ) -> keys.FacadePublicKey:
         jwk = self.jwks_client.get_signing_key_from_jwt(untrusted_token.token)
         return keys.PublicKey.from_cryptography_pubkey(jwk.key)
+
+    def update_last_used_datetime(self) -> None:
+        self.last_used_on = timezone.now()
+        self.save(update_fields=["last_used_on"])
