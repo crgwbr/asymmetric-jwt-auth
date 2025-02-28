@@ -21,9 +21,9 @@ test:
   coverage: '/^TOTAL.+?(\d+\%)$/'
   parallel:
     matrix:
-      - IMAGE: py310
-        TOX_SKIP_ENV: "^(?!py310-)"
       - IMAGE: py311
         TOX_SKIP_ENV: "^(?!py311-)"
       - IMAGE: py312
         TOX_SKIP_ENV: "^(?!py312-)"
+      - IMAGE: py313
+        TOX_SKIP_ENV: "^(?!py313-)"
