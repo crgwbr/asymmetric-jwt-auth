@@ -33,7 +33,7 @@ flake8 = "^7.1.2"
 freezegun = "^1.5.1"
 mypy = "^1.15.0"
 sphinx-rtd-theme = "^3.0.2"
-sphinx = "^8.2.2"
+sphinx = "^8.2.3"
 types-cryptography = "^3.3.23.2"
 
 [build-system]
