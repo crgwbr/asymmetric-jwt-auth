@@ -13,7 +13,7 @@ class DjangoUserRepository(BaseUserRepository):
     def __init__(self) -> None:
         self.User = get_user_model()
 
-    def get_user(self, username: str) -> Union[None, User]:
+    def get_user(self, username: str) -> None | User:
         """
         Get a Django user by username
         """
@@ -29,7 +29,7 @@ class DjangoPublicKeyListRepository(BasePublicKeyRepository):
         self,
         user: User,
         untrusted_token: UntrustedToken,
-    ) -> Union[Token, None]:
+    ) -> Token | None:
         """
         Attempt to verify a JWT for the given user using public keys from the PublicKey model.
         """
@@ -47,7 +47,7 @@ class DjangoJWKSRepository(BasePublicKeyRepository):
         self,
         user: User,
         untrusted_token: UntrustedToken,
-    ) -> Union[Token, None]:
+    ) -> Token | None:
         """
         Attempt to verify a JWT for the given user using public keys the user's JWKS endpoint.
         """

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # asymmetric-jwt-auth documentation build configuration file, created by
 # sphinx-quickstart on Mon Jan 23 11:21:47 2017.
