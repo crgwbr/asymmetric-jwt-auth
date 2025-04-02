@@ -1,4 +1,4 @@
-from typing import Any, Generic, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Generic, TypeVar, Union
 import hashlib
 import os
 
@@ -55,7 +55,7 @@ class PublicKey(Generic[PublicKeyType]):
     @classmethod
     def load_serialized_public_key(
         cls, key: bytes
-    ) -> Tuple[Optional[Exception], Optional[FacadePublicKey]]:
+    ) -> tuple[Exception | None, FacadePublicKey | None]:
         """
         Load a PEM or openssh format public key
         """
@@ -92,7 +92,7 @@ class PublicKey(Generic[PublicKeyType]):
         return hashlib.sha256(self.as_pem).hexdigest()
 
     @property
-    def allowed_algorithms(self) -> List[str]:  # pragma: no cover
+    def allowed_algorithms(self) -> list[str]:  # pragma: no cover
         """
         Return a list of allowed JWT algorithms for this key, in order of most to least preferred.
         """
@@ -123,7 +123,7 @@ class RSAPublicKey(PublicKey[rsa.RSAPublicKey]):
         }
 
     @property
-    def allowed_algorithms(self) -> List[str]:
+    def allowed_algorithms(self) -> list[str]:
         return [
             "RS512",
             "RS384",
@@ -138,7 +138,7 @@ class Ed25519PublicKey(PublicKey[ed25519.Ed25519PublicKey]):
         self._key = key
 
     @property
-    def allowed_algorithms(self) -> List[str]:
+    def allowed_algorithms(self) -> list[str]:
         return [
             "EdDSA",
         ]
@@ -161,7 +161,7 @@ class PrivateKey(Generic[PrivateKeyType]):
     def load_pem_from_file(
         cls,
         filepath: os.PathLike[Any],
-        password: Optional[bytes] = None,
+        password: bytes | None = None,
     ) -> FacadePrivateKey:
         """
         Load a PEM-format private key from disk.
@@ -171,7 +171,7 @@ class PrivateKey(Generic[PrivateKeyType]):
         return cls.load_pem(key_bytes, password=password)
 
     @classmethod
-    def load_pem(cls, pem: bytes, password: Optional[bytes] = None) -> FacadePrivateKey:
+    def load_pem(cls, pem: bytes, password: bytes | None = None) -> FacadePrivateKey:
         """
         Load a PEM-format private key
         """

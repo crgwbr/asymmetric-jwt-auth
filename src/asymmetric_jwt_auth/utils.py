@@ -1,10 +1,9 @@
-from typing import List
 import base64
 import struct
 
 
-def long2intarr(long_int: int) -> List[int]:
-    _bytes: List[int] = []
+def long2intarr(long_int: int) -> list[int]:
+    _bytes: list[int] = []
     while long_int:
         long_int, r = divmod(long_int, 256)
         _bytes.insert(0, r)

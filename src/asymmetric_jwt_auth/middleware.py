@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 import logging
 
 from django.http import HttpRequest, HttpResponse
@@ -37,12 +37,12 @@ class JWTAuthMiddleware:
         :param request: Django Request instance
         """
         # Check for presence of auth header
-        if "HTTP_AUTHORIZATION" not in request.META:
+        if "authorization" not in request.headers:
             return request
 
         # Ensure this auth header was meant for us (it has the JWT auth method).
         try:
-            method, header_data = request.META["HTTP_AUTHORIZATION"].split(" ", 1)
+            method, header_data = request.headers["authorization"].split(" ", 1)
         except ValueError:
             return request
 

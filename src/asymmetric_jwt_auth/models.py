@@ -88,7 +88,7 @@ class PublicKey(models.Model):
         key_parts = force_str(self.key).split(" ")
         if len(key_parts) == 3 and not self.comment:
             self.comment = key_parts.pop()
-        super(PublicKey, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
 
 class JWKSEndpointTrust(models.Model):

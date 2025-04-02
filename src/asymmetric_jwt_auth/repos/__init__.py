@@ -1,5 +1,3 @@
-from typing import List
-
 from django.utils.module_loading import import_string
 
 from .. import get_setting
@@ -11,7 +9,7 @@ def get_user_repository() -> BaseUserRepository:
     return Repo()
 
 
-def get_public_key_repositories() -> List[BasePublicKeyRepository]:
+def get_public_key_repositories() -> list[BasePublicKeyRepository]:
     repos = []
     for cls_path in get_setting("PUBLIC_KEY_REPOSITORIES"):
         Repo = import_string(cls_path)

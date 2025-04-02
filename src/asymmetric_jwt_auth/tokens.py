@@ -1,4 +1,3 @@
-from typing import Optional, Union
 import logging
 import time
 
@@ -19,7 +18,7 @@ class Token:
     username: str
     timestamp: int
 
-    def __init__(self, username: str, timestamp: Optional[int] = None):
+    def __init__(self, username: str, timestamp: int | None = None):
         self.username = username
         self.timestamp = int(time.time()) if timestamp is None else timestamp
 
@@ -68,7 +67,7 @@ class UntrustedToken:
     def __init__(self, token: str):
         self.token = token
 
-    def get_claimed_username(self) -> Union[None, str]:
+    def get_claimed_username(self) -> None | str:
         """
         Given a JWT, get the username that it is claiming to be `without verifying that the signature is valid`.
 
@@ -81,7 +80,7 @@ class UntrustedToken:
             return username
         return None
 
-    def verify(self, public_key: keys.FacadePublicKey) -> Union[None, Token]:
+    def verify(self, public_key: keys.FacadePublicKey) -> None | Token:
         """
         Verify the validity of the given JWT using the given public key.
         """
