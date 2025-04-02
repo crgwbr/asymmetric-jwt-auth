@@ -1,5 +1,3 @@
-from typing import List
-
 from django.utils.module_loading import import_string
 
 from .. import get_setting

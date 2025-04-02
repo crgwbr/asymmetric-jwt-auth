@@ -1,5 +1,3 @@
-from typing import Union
-
 from django.contrib.auth.models import User
 
 from ..tokens import Token, UntrustedToken

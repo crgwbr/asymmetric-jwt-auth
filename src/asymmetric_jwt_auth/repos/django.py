@@ -1,5 +1,3 @@
-from typing import Union
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from jwt.exceptions import PyJWKClientError

@@ -1,4 +1,3 @@
-from typing import Optional, Union
 import logging
 import time
 
