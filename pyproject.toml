@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "asymmetric-jwt-auth"
-version = "1.1.1"
+version = "1.2.0"
 description = "Asymmetric key based authentication for HTTP APIs"
 authors = ["Craig Weber <crgwbr@gmail.com>"]
 maintainers = ["Craig Weber <crgwbr@gmail.com>"]

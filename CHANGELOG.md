@@ -1,3 +1,20 @@
+## v1.2.0 (2025-04-03)
+
+### Feat
+
+- support django 5.2
+- drop Python 3.10. Add Python 3.13
+
+### Fix
+
+- **deps**: update dependency cryptography to >=44.0.2
+- **deps**: update dependency cryptography to >=44.0.1
+
+### Refactor
+
+- add django-upgrade precommit hook
+- add pyupgrade precommit hook
+
 ## v1.1.1 (2025-02-05)
 
 ### Fix
