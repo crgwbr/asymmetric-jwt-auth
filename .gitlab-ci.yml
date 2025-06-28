@@ -5,7 +5,7 @@ stages:
 cache:
   key: "$CI_PROJECT_NAME"
   paths:
-    - $HOME/.cache/pip
+    - $HOME/.cache
 
 include:
   - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.4.0
@@ -16,8 +16,8 @@ test:
   stage: test
   image: "registry.gitlab.com/thelabnyc/python:${IMAGE}"
   script:
-    - pip install tox
-    - tox
+    - uv sync
+    - uv run tox
   coverage: '/^TOTAL.+?(\d+\%)$/'
   parallel:
     matrix:
