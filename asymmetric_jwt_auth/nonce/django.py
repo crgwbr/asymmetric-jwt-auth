@@ -27,9 +27,7 @@ class DjangoCacheNonceBackend(BaseNonceBackend):
         key = self._create_nonce_key(username, timestamp)
         used = cache.get(key, set())
         used.add(nonce)
-        timestamp_tolerance = getattr(
-            settings, "ASYMMETRIC_JWT_AUTH", default_settings
-        )["TIMESTAMP_TOLERANCE"]
+        timestamp_tolerance = getattr(settings, "ASYMMETRIC_JWT_AUTH", default_settings)["TIMESTAMP_TOLERANCE"]
         cache.set(key, used, timestamp_tolerance * 2)
 
     def _create_nonce_key(self, username: str, timestamp: int) -> str:

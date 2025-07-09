@@ -10,8 +10,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="publickey",
             name="comment",
-            field=models.CharField(
-                blank=True, max_length=100, help_text="Comment describing this key"
-            ),
+            field=models.CharField(blank=True, max_length=100, help_text="Comment describing this key"),
         ),
     ]
