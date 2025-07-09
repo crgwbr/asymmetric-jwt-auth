@@ -29,12 +29,8 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.key_ed25519 = Ed25519PrivateKey.generate()
         self.key_rsa = RSAPrivateKey.generate()
 
-        self.user_key_ed25519 = PublicKey.objects.create(
-            user=self.user, key=self.key_ed25519.public_key.as_pem.decode()
-        )
-        self.user_key_rsa = PublicKey.objects.create(
-            user=self.user, key=self.key_rsa.public_key.as_pem.decode()
-        )
+        self.user_key_ed25519 = PublicKey.objects.create(user=self.user, key=self.key_ed25519.public_key.as_pem.decode())
+        self.user_key_rsa = PublicKey.objects.create(user=self.user, key=self.key_rsa.public_key.as_pem.decode())
 
         self.next_middleware = mock.MagicMock()
         self.run_middleware = JWTAuthMiddleware(self.next_middleware)
@@ -107,9 +103,7 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.assertEqual(self.next_middleware.call_count, 1)
 
     def test_missing_data(self):
-        header = Token(self.user.username, timestamp=0).create_auth_header(
-            self.key_ed25519
-        )
+        header = Token(self.user.username, timestamp=0).create_auth_header(self.key_ed25519)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
         self.run_middleware(request)

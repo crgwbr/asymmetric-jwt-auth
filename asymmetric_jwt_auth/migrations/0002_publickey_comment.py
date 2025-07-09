@@ -10,9 +10,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="publickey",
             name="comment",
-            field=models.CharField(
-                max_length=100, help_text="Comment describing this key", default=""
-            ),
+            field=models.CharField(max_length=100, help_text="Comment describing this key", default=""),
             preserve_default=False,
         ),
     ]

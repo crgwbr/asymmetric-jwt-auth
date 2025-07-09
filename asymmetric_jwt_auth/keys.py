@@ -53,9 +53,7 @@ class PublicKey(Generic[PublicKeyType]):
         return cls.from_cryptography_pubkey(privkey)
 
     @classmethod
-    def load_serialized_public_key(
-        cls, key: bytes
-    ) -> tuple[Exception | None, FacadePublicKey | None]:
+    def load_serialized_public_key(cls, key: bytes) -> tuple[Exception | None, FacadePublicKey | None]:
         """
         Load a PEM or openssh format public key
         """
@@ -72,9 +70,7 @@ class PublicKey(Generic[PublicKeyType]):
         """
         Get the public key as a PEM-formatted byte string
         """
-        pem_bytes = self._key.public_bytes(
-            serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo
-        )
+        pem_bytes = self._key.public_bytes(serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo)
         return pem_bytes
 
     @property
@@ -96,9 +92,7 @@ class PublicKey(Generic[PublicKeyType]):
         """
         Return a list of allowed JWT algorithms for this key, in order of most to least preferred.
         """
-        raise NotImplementedError(
-            "Subclass does not implement allowed_algorithms method"
-        )
+        raise NotImplementedError("Subclass does not implement allowed_algorithms method")
 
 
 class RSAPublicKey(PublicKey[rsa.RSAPublicKey]):
@@ -198,15 +192,11 @@ class RSAPrivateKey(PrivateKey[rsa.RSAPrivateKey]):
     pubkey_cls = RSAPublicKey
 
     @classmethod
-    def generate(
-        cls, size: int = 2048, public_exponent: int = 65537
-    ) -> "RSAPrivateKey":
+    def generate(cls, size: int = 2048, public_exponent: int = 65537) -> "RSAPrivateKey":
         """
         Generate an RSA private key.
         """
-        private = rsa.generate_private_key(
-            public_exponent=public_exponent, key_size=size
-        )
+        private = rsa.generate_private_key(public_exponent=public_exponent, key_size=size)
         return cls(private)
 
     def __init__(self, key: rsa.RSAPrivateKey):

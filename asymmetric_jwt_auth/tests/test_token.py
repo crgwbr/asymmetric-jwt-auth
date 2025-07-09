@@ -100,11 +100,7 @@ class UntrustedTokenTest(TestCase):
         token2 = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsNone(token2)
 
-    @override_settings(
-        ASYMMETRIC_JWT_AUTH=dict(
-            NONCE_BACKEND="asymmetric_jwt_auth.nonce.null.NullNonceBackend"
-        )
-    )
+    @override_settings(ASYMMETRIC_JWT_AUTH=dict(NONCE_BACKEND="asymmetric_jwt_auth.nonce.null.NullNonceBackend"))
     def test_nonce_already_used_null_backend(self):
         token1 = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsInstance(token1, tokens.Token)

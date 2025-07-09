@@ -9,7 +9,5 @@ class BaseUserRepository:
 
 
 class BasePublicKeyRepository:
-    def attempt_to_verify_token(
-        self, user: User, untrusted_token: UntrustedToken
-    ) -> Token | None:  # pragma: no cover
+    def attempt_to_verify_token(self, user: User, untrusted_token: UntrustedToken) -> Token | None:  # pragma: no cover
         raise NotImplementedError()

@@ -53,9 +53,7 @@ class PublicKeyTest(TestCase):
         self.assertEqual(pub.last_used_on, None)
         pub.update_last_used_datetime()
         # Check the first 19 digits (year – second precision) of ISO time: 2021-03-03T17:00:24
-        self.assertEqual(
-            pub.last_used_on.isoformat()[:19], timezone.now().isoformat()[:19]
-        )
+        self.assertEqual(pub.last_used_on.isoformat()[:19], timezone.now().isoformat()[:19])
 
     def test_get_key_ed25519(self):
         pub = models.PublicKey(user=self.user, key=data.OPENSSH_ED25519)

@@ -6,7 +6,6 @@ import asymmetric_jwt_auth.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("asymmetric_jwt_auth", "0005_auto_20210304_1116"),
     ]
@@ -15,9 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="jwksendpointtrust",
             name="last_used_on",
-            field=models.DateTimeField(
-                blank=True, null=True, verbose_name="Last Used On"
-            ),
+            field=models.DateTimeField(blank=True, null=True, verbose_name="Last Used On"),
         ),
         migrations.AlterField(
             model_name="publickey",
