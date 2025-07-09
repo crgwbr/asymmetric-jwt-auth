@@ -7,4 +7,4 @@ test_precommit: install_precommit
 	pre-commit run --all-files
 
 fmt:
-	black .
+	ruff format .

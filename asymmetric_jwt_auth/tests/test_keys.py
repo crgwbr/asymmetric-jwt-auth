@@ -29,16 +29,12 @@ class PublicKeyTest(TestCase):
         self.assertIsInstance(key, keys.Ed25519PublicKey)
 
     def test_load_invalid_pem_rsa(self):
-        exc, key = keys.PublicKey.load_serialized_public_key(
-            data.PEM_PUBLIC_RSA_INVALID
-        )
+        exc, key = keys.PublicKey.load_serialized_public_key(data.PEM_PUBLIC_RSA_INVALID)
         self.assertIsInstance(exc, Exception)
         self.assertIsNone(key)
 
     def test_load_invalid_pem_ed25519(self):
-        exc, key = keys.PublicKey.load_serialized_public_key(
-            data.PEM_PUBLIC_ED25519_INVALID
-        )
+        exc, key = keys.PublicKey.load_serialized_public_key(data.PEM_PUBLIC_ED25519_INVALID)
         self.assertIsInstance(exc, Exception)
         self.assertIsNone(key)
 
@@ -48,9 +44,7 @@ class PublicKeyTest(TestCase):
         self.assertIsNone(key)
 
     def test_load_invalid_openssh_ed25519(self):
-        exc, key = keys.PublicKey.load_serialized_public_key(
-            data.OPENSSH_ED25519_INVALID
-        )
+        exc, key = keys.PublicKey.load_serialized_public_key(data.OPENSSH_ED25519_INVALID)
         self.assertIsInstance(exc, Exception)
         self.assertIsNone(key)
 

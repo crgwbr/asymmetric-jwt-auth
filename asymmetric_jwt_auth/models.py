@@ -125,9 +125,7 @@ class JWKSEndpointTrust(models.Model):
     def jwks_client(self) -> PyJWKClient:
         return get_jwks_client(self.jwks_url)
 
-    def get_signing_key(
-        self, untrusted_token: tokens.UntrustedToken
-    ) -> keys.FacadePublicKey:
+    def get_signing_key(self, untrusted_token: tokens.UntrustedToken) -> keys.FacadePublicKey:
         jwk = self.jwks_client.get_signing_key_from_jwt(untrusted_token.token)
         return keys.PublicKey.from_cryptography_pubkey(jwk.key)
 

@@ -115,9 +115,7 @@ class UntrustedToken:
 
         # Ensure nonce is unique
         nonce_backend = get_nonce_backend()
-        if not nonce_backend.validate_nonce(
-            claimed_username, claimed_time, claimed_nonce
-        ):
+        if not nonce_backend.validate_nonce(claimed_username, claimed_time, claimed_nonce):
             logger.debug("Claimed nonce failed to validate")
             return None
 

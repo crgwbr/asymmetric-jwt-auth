@@ -14,9 +14,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="publickey",
             name="last_used_on",
-            field=models.DateTimeField(
-                blank=True, null=True, verbose_name="Last Used On"
-            ),
+            field=models.DateTimeField(blank=True, null=True, verbose_name="Last Used On"),
         ),
         migrations.AlterField(
             model_name="publickey",
