@@ -1,0 +1,20 @@
+[tasks.sync]
+description = "Install dependencies"
+run = "uv sync"
+
+[tasks.test]
+description = "Run the test suite in the default environment"
+depends = ['sync']
+run = [
+    "uv run mypy asymmetric_jwt_auth",
+    "uv run coverage erase",
+    "uv run coverage run --branch --source asymmetric_jwt_auth sandbox/manage.py test --noinput asymmetric_jwt_auth",
+    "uv run coverage report -m",
+]
+
+[tasks.tox]
+description = "Run the test suite with tox"
+depends = ['sync']
+run = [
+    "uv run tox",
+]
