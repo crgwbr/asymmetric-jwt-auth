@@ -1,3 +1,14 @@
+## v1.2.1 (2025-08-11)
+
+### Fix
+
+- add more extensive logging to JWTAuthMiddleware to aid in debugging auth failures (#29045)
+
+### Refactor
+
+- migrate black/flake8 -> ruff
+- migrate from poetry -> uv
+
 ## v1.2.0 (2025-04-03)
 
 ### Feat
