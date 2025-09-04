@@ -15,7 +15,7 @@ classifiers = [
     "License :: OSI Approved :: ISC License (ISCL)",
 ]
 dependencies = [
-    "cryptography (>=44.0.2)",
+    "cryptography (>=45.0.6)",
     "Django (>=4.2)",
     "PyJWT (>=2.10.1,<3)",
 ]
