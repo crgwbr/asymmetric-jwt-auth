@@ -46,7 +46,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cryptography", specifier = ">=44.0.3" },
+    { name = "cryptography", specifier = ">=45.0.6" },
     { name = "django", specifier = ">=4.2" },
     { name = "pyjwt", specifier = ">=2.10.1,<3" },
 ]
