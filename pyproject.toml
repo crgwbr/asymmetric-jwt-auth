@@ -52,7 +52,7 @@ dev = [
     "sphinx (>=8.2.3,<9)",
     "types-cryptography (>=3.3.23.2,<4)",
     "tox>=4.29.0",
-    "tox-uv>=1.26.1",
+    "tox-uv>=1.28.0",
 ]
 
 [tool.hatch.build.targets.wheel]
