@@ -44,7 +44,7 @@ explicit = true
 [dependency-groups]
 dev = [
     "coverage (>=7.10.6,<8)",
-    "django-stubs (>=5.2.4,<6)",
+    "django-stubs (>=5.2.5,<6)",
     "ruff (>=0.12.12)",
     "freezegun (>=1.5.5,<2)",
     "mypy (>=1.18.1,<2)",
