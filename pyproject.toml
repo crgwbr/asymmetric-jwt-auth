@@ -51,7 +51,7 @@ dev = [
     "sphinx-rtd-theme (>=3.0.2,<4)",
     "sphinx (>=8.2.3,<9)",
     "types-cryptography (>=3.3.23.2,<4)",
-    "tox>=4.30.3",
+    "tox>=4.31.0",
     "tox-uv>=1.28.0",
 ]
 
