@@ -27,3 +27,5 @@ test:
         TOX_SKIP_ENV: "^(?!py312-)"
       - IMAGE: py313
         TOX_SKIP_ENV: "^(?!py313-)"
+      - IMAGE: py314
+        TOX_SKIP_ENV: "^(?!py314-)"
