@@ -14,9 +14,9 @@ cache:
 
 include:
   - component: gitlab.com/thelabnyc/thelab-ci-components/review@0.6.0
-  - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.5.2
-  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-gitlab-release@0.5.2
-  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-to-pypi@0.5.2
+  - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.6.0
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-gitlab-release@0.6.0
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-to-pypi@0.6.0
 
 test:
   stage: test
