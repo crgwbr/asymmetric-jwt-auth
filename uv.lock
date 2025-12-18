@@ -61,7 +61,7 @@ dev = [
     { name = "coverage", specifier = ">=7.13.0,<8" },
     { name = "django-stubs", specifier = ">=5.2.8,<6" },
     { name = "freezegun", specifier = ">=1.5.5,<2" },
-    { name = "mypy", specifier = ">=1.19.0,<2" },
+    { name = "mypy", specifier = ">=1.19.1,<2" },
     { name = "ruff", specifier = ">=0.14.9" },
     { name = "sphinx", specifier = ">=8.2.3,<9" },
     { name = "sphinx-rtd-theme", specifier = ">=3.0.2,<4" },
