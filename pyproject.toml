@@ -43,7 +43,7 @@ explicit = true
 
 [dependency-groups]
 dev = [
-    "coverage (>=7.13.0,<8)",
+    "coverage (>=7.13.1,<8)",
     "django-stubs (>=5.2.8,<6)",
     "ruff (>=0.14.10)",
     "freezegun (>=1.5.5,<2)",
