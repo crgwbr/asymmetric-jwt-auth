@@ -65,7 +65,7 @@ dev = [
     { name = "ruff", specifier = ">=0.14.11" },
     { name = "sphinx", specifier = ">=8.2.3,<9" },
     { name = "sphinx-rtd-theme", specifier = ">=3.0.2,<4" },
-    { name = "tox", specifier = ">=4.34.0" },
+    { name = "tox", specifier = ">=4.34.1" },
     { name = "tox-uv", specifier = ">=1.29.0" },
     { name = "types-cryptography", specifier = ">=3.3.23.2,<4" },
 ]
