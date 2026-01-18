@@ -62,7 +62,7 @@ dev = [
     { name = "django-stubs", specifier = ">=5.2.8,<6" },
     { name = "freezegun", specifier = ">=1.5.5,<2" },
     { name = "mypy", specifier = ">=1.19.1,<2" },
-    { name = "ruff", specifier = ">=0.14.12" },
+    { name = "ruff", specifier = ">=0.14.13" },
     { name = "sphinx", specifier = ">=8.2.3,<9" },
     { name = "sphinx-rtd-theme", specifier = ">=3.1.0,<4" },
     { name = "tox", specifier = ">=4.34.1" },
