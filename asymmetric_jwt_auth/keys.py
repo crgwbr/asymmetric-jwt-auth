@@ -4,11 +4,12 @@ import os
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ed25519, rsa
+from cryptography.hazmat.primitives.asymmetric.types import (
+    PrivateKeyTypes,
+    PublicKeyTypes,
+)
 
 from .utils import long_to_base64
-
-CryptoPrivateKey = Union[rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey]
-CryptoPublicKey = Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey]
 
 FacadePrivateKey = Union["RSAPrivateKey", "Ed25519PrivateKey"]
 FacadePublicKey = Union["RSAPublicKey", "Ed25519PublicKey"]
@@ -29,7 +30,7 @@ class PublicKey(Generic[PublicKeyType]):
     _key: PublicKeyType
 
     @staticmethod
-    def from_cryptography_pubkey(pubkey: CryptoPublicKey) -> FacadePublicKey:
+    def from_cryptography_pubkey(pubkey: PublicKeyTypes) -> FacadePublicKey:
         if isinstance(pubkey, rsa.RSAPublicKey):
             return RSAPublicKey(pubkey)
         if isinstance(pubkey, ed25519.Ed25519PublicKey):
@@ -144,7 +145,7 @@ class PrivateKey(Generic[PrivateKeyType]):
     _key: PrivateKeyType
 
     @staticmethod
-    def from_cryptography_privkey(privkey: CryptoPrivateKey) -> FacadePrivateKey:
+    def from_cryptography_privkey(privkey: PrivateKeyTypes) -> FacadePrivateKey:
         if isinstance(privkey, rsa.RSAPrivateKey):
             return RSAPrivateKey(privkey)
         if isinstance(privkey, ed25519.Ed25519PrivateKey):
@@ -174,7 +175,7 @@ class PrivateKey(Generic[PrivateKeyType]):
 
     @property
     def as_pem(self) -> bytes:
-        pem_bytes = self._key.private_bytes(  # type:ignore[union-attr]
+        pem_bytes = self._key.private_bytes(
             serialization.Encoding.PEM,
             serialization.PrivateFormat.PKCS8,
             serialization.NoEncryption(),
