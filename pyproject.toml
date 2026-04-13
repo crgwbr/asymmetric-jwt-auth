@@ -51,7 +51,7 @@ dev = [
     "sphinx-rtd-theme (>=3.1.0,<4)",
     "sphinx (>=8.2.3,<9)",
     "tox>=4.52.1",
-    "tox-uv>=1.35.0",
+    "tox-uv>=1.35.1",
 ]
 
 [tool.hatch.build.targets.wheel]
