@@ -127,6 +127,8 @@ class MiddlewareTest(BaseMiddlewareTest):
 
 
 class MiddlewareJWKSTest(BaseMiddlewareTest):
+    jwks_url = "https://example.com/.well-known/jwks.json"
+
     def setUp(self):
         self.rfactory = RequestFactory()
         self.user = User.objects.create_user(username="foo")
@@ -144,7 +146,7 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
                 self.key_rsa.public_key.as_jwk,
             ],
         }
-        JWKSEndpointTrust.objects.create(user=self.user, jwks_url="")
+        JWKSEndpointTrust.objects.create(user=self.user, jwks_url=self.jwks_url)
         header = Token(self.user.username).create_auth_header(self.key_rsa)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
@@ -162,7 +164,7 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
                 jwk,
             ],
         }
-        JWKSEndpointTrust.objects.create(user=self.user, jwks_url="")
+        JWKSEndpointTrust.objects.create(user=self.user, jwks_url=self.jwks_url)
         header = Token(self.user.username).create_auth_header(self.key_rsa)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
@@ -177,7 +179,7 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
                 self.key_rsa.public_key.as_jwk,
             ],
         }
-        JWKSEndpointTrust.objects.create(user=self.user, jwks_url="")
+        JWKSEndpointTrust.objects.create(user=self.user, jwks_url=self.jwks_url)
         header = Token("rusty").create_auth_header(self.key_rsa)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
@@ -192,7 +194,7 @@ class MiddlewareJWKSTest(BaseMiddlewareTest):
                 self.key_rsa.public_key.as_jwk,
             ],
         }
-        JWKSEndpointTrust.objects.create(user=self.user, jwks_url="")
+        JWKSEndpointTrust.objects.create(user=self.user, jwks_url=self.jwks_url)
         header = Token(self.user.username, timestamp=0).create_auth_header(self.key_rsa)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)
         self.assertNotLoggedIn(request)
