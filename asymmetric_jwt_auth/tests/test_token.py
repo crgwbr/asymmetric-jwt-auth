@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
 from django.contrib.auth.models import User
@@ -81,13 +81,13 @@ class UntrustedTokenTest(TestCase):
         self.assertIsNone(token)
 
     def test_time_out_of_allowed_range_before(self):
-        dt = datetime.now() - timedelta(seconds=30)
+        dt = datetime.now(tz=UTC) - timedelta(seconds=30)
         with freeze_time(dt):
             token = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsNone(token)
 
     def test_time_out_of_allowed_range_after(self):
-        dt = datetime.now() + timedelta(seconds=30)
+        dt = datetime.now(tz=UTC) + timedelta(seconds=30)
         with freeze_time(dt):
             token = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsNone(token)
@@ -100,7 +100,7 @@ class UntrustedTokenTest(TestCase):
         token2 = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsNone(token2)
 
-    @override_settings(ASYMMETRIC_JWT_AUTH=dict(NONCE_BACKEND="asymmetric_jwt_auth.nonce.null.NullNonceBackend"))
+    @override_settings(ASYMMETRIC_JWT_AUTH={"NONCE_BACKEND": "asymmetric_jwt_auth.nonce.null.NullNonceBackend"})
     def test_nonce_already_used_null_backend(self):
         token1 = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsInstance(token1, tokens.Token)

@@ -24,9 +24,9 @@ class JWKSViewTest(TestCase):
         )
 
     @override_settings(
-        ASYMMETRIC_JWT_AUTH=dict(
-            SIGNING_PUBLIC_KEYS=[data.PEM_PUBLIC_RSA, data.PEM_PUBLIC_RSA],
-        )
+        ASYMMETRIC_JWT_AUTH={
+            "SIGNING_PUBLIC_KEYS": [data.PEM_PUBLIC_RSA, data.PEM_PUBLIC_RSA],
+        }
     )
     def test_pem_keys(self):
         client = Client()
@@ -37,7 +37,7 @@ class JWKSViewTest(TestCase):
             "e": "AQAB",
             "kid": "53c5b68c5ecba3e25df3f8326de6c0b0befb67e9217651a2f40e388f6567f056",
             "kty": "RSA",
-            "n": "odxbRh5LOtoB3Shf6K3mRn7ME7Doo5Qm5h72ITt-E6U0l6qXGdVBTj0XhQVNnGjnZTGzU7IacIw1a_03qVHJfcc0Ki7ig7YSPMMl0WSp0m080YlsCZ-9g-WG6DrgjpGQU7yaBhNsKtR5DP20bm8411S9VLqV2GEOzBKpB10_lwhRZuv_Qj7obwSqdVCzMNb7t5LHqG0MxOF7BeYELXIqTEKFfWkZytXCAnmC9hk9RtzUZ_lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V6HVDjsPVxPmVYswV8qInG8kJUpm48s9PAWfgi4HCGmJgn-Irbed2tlRf73jxyCgX0Q",  # NOQA
+            "n": "odxbRh5LOtoB3Shf6K3mRn7ME7Doo5Qm5h72ITt-E6U0l6qXGdVBTj0XhQVNnGjnZTGzU7IacIw1a_03qVHJfcc0Ki7ig7YSPMMl0WSp0m080YlsCZ-9g-WG6DrgjpGQU7yaBhNsKtR5DP20bm8411S9VLqV2GEOzBKpB10_lwhRZuv_Qj7obwSqdVCzMNb7t5LHqG0MxOF7BeYELXIqTEKFfWkZytXCAnmC9hk9RtzUZ_lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V6HVDjsPVxPmVYswV8qInG8kJUpm48s9PAWfgi4HCGmJgn-Irbed2tlRf73jxyCgX0Q",
             "use": "sig",
         }
         self.assertEqual(
@@ -51,11 +51,11 @@ class JWKSViewTest(TestCase):
         )
 
     @override_settings(
-        ASYMMETRIC_JWT_AUTH=dict(
-            SIGNING_PUBLIC_KEYS=[
+        ASYMMETRIC_JWT_AUTH={
+            "SIGNING_PUBLIC_KEYS": [
                 PublicKey.load_pem(data.PEM_PUBLIC_RSA),
             ],
-        )
+        }
     )
     def test_loaded_keys(self):
         client = Client()
@@ -66,7 +66,7 @@ class JWKSViewTest(TestCase):
             "e": "AQAB",
             "kid": "53c5b68c5ecba3e25df3f8326de6c0b0befb67e9217651a2f40e388f6567f056",
             "kty": "RSA",
-            "n": "odxbRh5LOtoB3Shf6K3mRn7ME7Doo5Qm5h72ITt-E6U0l6qXGdVBTj0XhQVNnGjnZTGzU7IacIw1a_03qVHJfcc0Ki7ig7YSPMMl0WSp0m080YlsCZ-9g-WG6DrgjpGQU7yaBhNsKtR5DP20bm8411S9VLqV2GEOzBKpB10_lwhRZuv_Qj7obwSqdVCzMNb7t5LHqG0MxOF7BeYELXIqTEKFfWkZytXCAnmC9hk9RtzUZ_lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V6HVDjsPVxPmVYswV8qInG8kJUpm48s9PAWfgi4HCGmJgn-Irbed2tlRf73jxyCgX0Q",  # NOQA
+            "n": "odxbRh5LOtoB3Shf6K3mRn7ME7Doo5Qm5h72ITt-E6U0l6qXGdVBTj0XhQVNnGjnZTGzU7IacIw1a_03qVHJfcc0Ki7ig7YSPMMl0WSp0m080YlsCZ-9g-WG6DrgjpGQU7yaBhNsKtR5DP20bm8411S9VLqV2GEOzBKpB10_lwhRZuv_Qj7obwSqdVCzMNb7t5LHqG0MxOF7BeYELXIqTEKFfWkZytXCAnmC9hk9RtzUZ_lryD1UgCHZ16gPtmPdFV7fuN8FBNrbaQCldz6V6HVDjsPVxPmVYswV8qInG8kJUpm48s9PAWfgi4HCGmJgn-Irbed2tlRf73jxyCgX0Q",
             "use": "sig",
         }
         self.assertEqual(
@@ -79,11 +79,11 @@ class JWKSViewTest(TestCase):
         )
 
     @override_settings(
-        ASYMMETRIC_JWT_AUTH=dict(
-            SIGNING_PUBLIC_KEYS=[
+        ASYMMETRIC_JWT_AUTH={
+            "SIGNING_PUBLIC_KEYS": [
                 data.PEM_PUBLIC_RSA_INVALID,
             ],
-        )
+        }
     )
     def test_invalid_pem_keys(self):
         client = Client()

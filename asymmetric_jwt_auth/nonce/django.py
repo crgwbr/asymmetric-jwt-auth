@@ -34,8 +34,4 @@ class DjangoCacheNonceBackend(BaseNonceBackend):
         """
         Create and return the cache key for storing nonces
         """
-        return "{}-nonces-{}-{}".format(
-            self.__class__.__name__,
-            username,
-            timestamp,
-        )
+        return f"{self.__class__.__name__}-nonces-{username}-{timestamp}"
