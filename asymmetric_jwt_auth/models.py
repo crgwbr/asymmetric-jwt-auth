@@ -21,7 +21,7 @@ def validate_public_key(keystr: str) -> None:
     exc, key = keys.PublicKey.load_serialized_public_key(key_bytes)
     is_valid = (exc is None) and (key is not None)
     if not is_valid:
-        raise ValidationError("Public key is invalid: %s" % exc)
+        raise ValidationError(f"Public key is invalid: {exc}")
 
 
 @lru_cache

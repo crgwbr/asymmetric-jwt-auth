@@ -19,7 +19,7 @@ class JWKSEndpointView(View):
             if isinstance(_key, PublicKey):
                 keys.append(_key)  # type:ignore[arg-type]
             else:
-                exc, key = PublicKey.load_serialized_public_key(_key)
+                _exc, key = PublicKey.load_serialized_public_key(_key)
                 if key is not None:
                     keys.append(key)
         return keys

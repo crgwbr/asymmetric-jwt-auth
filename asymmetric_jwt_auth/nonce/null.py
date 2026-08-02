@@ -16,4 +16,3 @@ class NullNonceBackend(BaseNonceBackend):
         """
         Log a nonce as being used, and therefore henceforth invalid.
         """
-        pass

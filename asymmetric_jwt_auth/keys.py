@@ -16,11 +16,11 @@ FacadePublicKey = Union["RSAPublicKey", "Ed25519PublicKey"]
 
 PrivateKeyType = TypeVar(
     "PrivateKeyType",
-    bound=Union[rsa.RSAPrivateKey, ed25519.Ed25519PrivateKey],
+    bound=rsa.RSAPrivateKey | ed25519.Ed25519PrivateKey,
 )
 PublicKeyType = TypeVar(
     "PublicKeyType",
-    bound=Union[rsa.RSAPublicKey, ed25519.Ed25519PublicKey],
+    bound=rsa.RSAPublicKey | ed25519.Ed25519PublicKey,
 )
 
 
@@ -62,7 +62,7 @@ class PublicKey(Generic[PublicKeyType]):
         for loader in (cls.load_pem, cls.load_openssh):
             try:
                 return None, loader(key)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 exc = e
         return exc, None
 
