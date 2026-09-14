@@ -17,7 +17,7 @@ classifiers = [
 dependencies = [
     "cryptography (>=50.0.1)",
     "Django (>=5.2)",
-    "PyJWT (>=2.13.0,<3)",
+    "PyJWT (>=2.14.0,<3)",
 ]
 requires-python = ">=3.11"
 
