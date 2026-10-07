@@ -127,6 +127,15 @@ class MiddlewareTest(BaseMiddlewareTest):
         self.assertNotLoggedIn(request)
         self.assertEqual(self.next_middleware.call_count, 1)
 
+    def test_auth_header_malformed_jwt(self) -> None:
+        method, token = Token(self.user.username).create_auth_header(self.key_rsa).split(" ", 1)
+        header, _, signature = token.split(".")
+        request = self.rfactory.get("/", HTTP_AUTHORIZATION=f"{method} {header}.bm9wZQ.{signature}")
+        self.assertNotLoggedIn(request)
+        self.run_middleware(request)
+        self.assertNotLoggedIn(request)
+        self.assertEqual(self.next_middleware.call_count, 1)
+
     def test_header_jwt_missing_username(self):
         header = Token("").create_auth_header(self.key_rsa)
         request = self.rfactory.get("/", HTTP_AUTHORIZATION=header)

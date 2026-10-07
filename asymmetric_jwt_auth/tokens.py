@@ -98,10 +98,13 @@ class UntrustedToken:
         """
         Given a JWT, get the username that it is claiming to be `without verifying that the signature is valid`.
 
-        :param token: JWT claim
-        :return: Username
+        :return: Username, or ``None`` if the token is malformed or doesn't claim a username
         """
-        unverified_data = jwt.decode(self.token, options={"verify_signature": False})
+        try:
+            unverified_data = jwt.decode(self.token, options={"verify_signature": False})
+        except jwt.InvalidTokenError:
+            logger.debug("JWT could not be decoded")
+            return None
         username = unverified_data.get("username")
         if isinstance(username, str):
             return username
