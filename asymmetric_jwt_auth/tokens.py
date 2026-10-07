@@ -129,6 +129,11 @@ class UntrustedToken:
         if not claimed_username or not claimed_time or not claimed_nonce:
             return None
 
+        # Ensure time is a unix timestamp
+        if not isinstance(claimed_time, int | float):
+            logger.debug("Claimed time is not a number")
+            return None
+
         # Ensure time is within acceptable bounds
         current_time = time.time()
         timestamp_tolerance = get_setting("TIMESTAMP_TOLERANCE")
@@ -136,9 +141,10 @@ class UntrustedToken:
             current_time - timestamp_tolerance,
             current_time + timestamp_tolerance,
         )
-        if claimed_time < min_time or claimed_time > max_time:
+        if not min_time <= claimed_time <= max_time:
             logger.debug("Claimed time is outside of allowable tolerances")
             return None
+        claimed_time = int(claimed_time)
 
         # Ensure nonce is unique
         nonce_backend = get_nonce_backend()
