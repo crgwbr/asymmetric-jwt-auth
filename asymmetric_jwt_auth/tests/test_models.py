@@ -1,10 +1,13 @@
+from unittest import mock
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
+from jwt import PyJWKClient
 import jwt
 
-from .. import keys, models, tokens
+from .. import jwks, keys, models, tokens
 from . import data
 
 
@@ -73,7 +76,10 @@ class PublicKeyTest(TestCase):
 
 
 class JWKSEndpointTrustTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
+        refresh_worker = mock.patch.object(jwks, "_refresh_worker")
+        refresh_worker.start()
+        self.addCleanup(refresh_worker.stop)
         self.user = User.objects.create_user(username="foo")
         self.jwks = models.JWKSEndpointTrust.objects.create(
             user=self.user,
@@ -105,3 +111,10 @@ class JWKSEndpointTrustTest(TestCase):
                 "gty": "client-credentials",
             },
         )
+
+    def test_jwks_client_is_deprecated(self) -> None:
+        with self.assertWarns(DeprecationWarning):
+            client = self.jwks.jwks_client
+        self.assertIsInstance(client, PyJWKClient)
+        with self.assertWarns(DeprecationWarning):
+            self.assertIs(models.get_jwks_client(self.jwks.jwks_url), client)

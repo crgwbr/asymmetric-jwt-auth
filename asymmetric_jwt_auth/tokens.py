@@ -1,3 +1,5 @@
+from collections.abc import Collection
+from functools import cached_property
 import logging
 import time
 
@@ -66,6 +68,31 @@ class UntrustedToken:
 
     def __init__(self, token: str):
         self.token = token
+
+    def has_supported_algorithm(self, algorithms: Collection[str] = keys.SUPPORTED_ALGORITHMS) -> bool:
+        """
+        Check whether the JWT's (unverified) ``alg`` header names one of the given algorithms. A token that
+        fails this check can never be verified by a key that only accepts those algorithms.
+        """
+        alg = self._unverified_header.get("alg")
+        return isinstance(alg, str) and alg in algorithms
+
+    def get_claimed_key_id(self) -> None | str:
+        """
+        Get the (unverified) ``kid`` header of the JWT, if it has one.
+        """
+        kid = self._unverified_header.get("kid")
+        if isinstance(kid, str):
+            return kid
+        return None
+
+    @cached_property
+    def _unverified_header(self) -> dict[str, object]:
+        # Parsed once, so header lookups cost the same however many of them a code path makes
+        try:
+            return jwt.get_unverified_header(self.token)
+        except jwt.InvalidTokenError:
+            return {}
 
     def get_claimed_username(self) -> None | str:
         """

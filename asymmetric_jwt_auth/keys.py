@@ -23,6 +23,13 @@ PublicKeyType = TypeVar(
     bound=rsa.RSAPublicKey | ed25519.Ed25519PublicKey,
 )
 
+#: JWT signing algorithms accepted for RSA keys, most preferred first
+RSA_ALGORITHMS = ("RS512", "RS384", "RS256")
+#: JWT signing algorithms accepted for Ed25519 keys
+ED25519_ALGORITHMS = ("EdDSA",)
+#: Every JWT signing algorithm that some supported key type can verify
+SUPPORTED_ALGORITHMS = frozenset(RSA_ALGORITHMS + ED25519_ALGORITHMS)
+
 
 class PublicKey(Generic[PublicKeyType]):
     """Represents a public key"""
@@ -103,6 +110,13 @@ class RSAPublicKey(PublicKey[rsa.RSAPublicKey]):
         self._key = key
 
     @property
+    def key_size(self) -> int:
+        """
+        Size of the key's modulus, in bits
+        """
+        return self._key.key_size
+
+    @property
     def as_jwk(self) -> dict[str, str]:
         """
         Return the public key in JWK format
@@ -119,11 +133,7 @@ class RSAPublicKey(PublicKey[rsa.RSAPublicKey]):
 
     @property
     def allowed_algorithms(self) -> list[str]:
-        return [
-            "RS512",
-            "RS384",
-            "RS256",
-        ]
+        return list(RSA_ALGORITHMS)
 
 
 class Ed25519PublicKey(PublicKey[ed25519.Ed25519PublicKey]):
@@ -134,9 +144,7 @@ class Ed25519PublicKey(PublicKey[ed25519.Ed25519PublicKey]):
 
     @property
     def allowed_algorithms(self) -> list[str]:
-        return [
-            "EdDSA",
-        ]
+        return list(ED25519_ALGORITHMS)
 
 
 class PrivateKey(Generic[PrivateKeyType]):
