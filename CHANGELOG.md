@@ -1,3 +1,40 @@
+## v1.3.0 (2026-10-26)
+
+### Feat
+
+- support Python 3.14
+
+### Fix
+
+- refresh the JWKS key sets each process uses on a timer (#37280)
+- make JWT auth response times independent of the claimed user (#37280)
+- **deps**: update dependency cryptography to >=50.0.2
+- **deps**: update dependency pyjwt to >=2.15.1,<3
+- **deps**: update dependency pyjwt to >=2.15.0,<3
+- **deps**: update dependency pyjwt to >=2.14.0,<3
+- **deps**: update dependency cryptography to >=50.0.1
+- **deps**: update dependency cryptography to >=50.0.0
+- **deps**: update dependency cryptography to >=49.0.0
+- **deps**: update dependency cryptography to >=48.0.1
+- **deps**: update dependency pyjwt to >=2.13.0,<3
+- **deps**: update dependency cryptography to >=48.0.0
+- **deps**: update dependency cryptography to >=47.0.0
+- **deps**: update dependency cryptography to >=46.0.7
+- **deps**: update dependency cryptography to >=46.0.6
+- **deps**: update dependency pyjwt to >=2.12.1,<3
+- **deps**: update dependency pyjwt to >=2.12.0,<3
+- **deps**: update dependency cryptography to >=46.0.5
+- **deps**: update dependency pyjwt to >=2.11.0,<3
+- **deps**: update dependency cryptography to >=46.0.4
+- **deps**: update dependency django to >=5.2
+- **deps**: update dependency cryptography to >=46.0.3
+- **deps**: update dependency cryptography to >=46.0.2
+- **deps**: update dependency cryptography to >=46.0.1
+- **deps**: update dependency cryptography to >=45.0.7
+- **deps**: update dependency cryptography to >=45.0.6
+- **deps**: update dependency cryptography to >=44.0.3
+- prevent renovate from pointing all URLs at gitlab
+
 ## v1.2.1 (2025-08-11)
 
 ### Fix
