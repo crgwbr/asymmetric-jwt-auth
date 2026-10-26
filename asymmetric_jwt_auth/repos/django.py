@@ -158,22 +158,28 @@ class DjangoJWKSRepository(BasePublicKeyRepository):
         untrusted_token: UntrustedToken,
     ) -> tuple[Token, models.JWKSEndpointTrust] | None:
         # Every path does one cache read and one signature check, whether or not a matching key is found
+        signature_length = _get_signature_length(untrusted_token)
+        decoy_key = self._get_decoy_key(untrusted_token, signature_length)
         endpoints = list(jwks_endpoints)
         if not endpoints:
             jwks.read_decoy()
-            untrusted_token.verify(public_key=self._get_decoy_key(untrusted_token))
+            untrusted_token.verify(public_key=decoy_key)
         for jwks_endpoint in endpoints:
             try:
                 public_key = jwks_endpoint.get_signing_key(untrusted_token)
             except PyJWKClientError:
-                public_key = self._get_decoy_key(untrusted_token)
+                public_key = decoy_key
+            else:
+                # A key that can't verify the token's alg or signature length would reject it before any signature math
+                if not untrusted_token.has_supported_algorithm(public_key.allowed_algorithms) or _is_wrong_size(public_key, signature_length):
+                    public_key = decoy_key
             token = untrusted_token.verify(public_key=public_key)
             if token:
                 return token, jwks_endpoint
         return None
 
-    def _get_decoy_key(self, untrusted_token: UntrustedToken) -> keys.FacadePublicKey:
-        decoys = _get_decoys(_get_signature_length(untrusted_token))
+    def _get_decoy_key(self, untrusted_token: UntrustedToken, signature_length: int) -> keys.FacadePublicKey:
+        decoys = _get_decoys(signature_length)
         for decoy in decoys:
             if untrusted_token.has_supported_algorithm(decoy.key.allowed_algorithms):
                 return decoy.key
