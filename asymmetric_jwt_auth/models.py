@@ -1,5 +1,6 @@
 from functools import lru_cache
 from typing import Any
+import warnings
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -9,7 +10,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.translation import gettext_lazy as _
 from jwt import PyJWKClient
 
-from . import keys, tokens
+from . import jwks, keys, tokens
 
 
 def validate_public_key(keystr: str) -> None:
@@ -24,14 +25,24 @@ def validate_public_key(keystr: str) -> None:
         raise ValidationError(f"Public key is invalid: {exc}")
 
 
+_JWKS_CLIENT_DEPRECATION = (
+    "{} is deprecated and will be removed in a future release. JWKS keys are now loaded through "
+    "asymmetric_jwt_auth.jwks, and this client bypasses its cache shared between processes."
+)
+
+
 @lru_cache
+def _get_jwks_client(jwks_url: str) -> PyJWKClient:
+    return PyJWKClient(jwks_url)
+
+
 def get_jwks_client(jwks_url: str) -> PyJWKClient:
     """
-    LRU-cached constructor for PyJWKClient. Re-using instances of this (scoped
-    by the URL of course) allows the JWKS caching inside PyJWKClient to function
-    correctly.
+    Deprecated: authentication no longer uses this. Get the signing key through
+    :meth:`JWKSEndpointTrust.get_signing_key` instead.
     """
-    return PyJWKClient(jwks_url)
+    warnings.warn(_JWKS_CLIENT_DEPRECATION.format("get_jwks_client()"), DeprecationWarning, stacklevel=2)
+    return _get_jwks_client(jwks_url)
 
 
 class PublicKey(models.Model):
@@ -123,10 +134,19 @@ class JWKSEndpointTrust(models.Model):
 
     @property
     def jwks_client(self) -> PyJWKClient:
-        return get_jwks_client(self.jwks_url)
+        """
+        Deprecated: authentication no longer uses this. Use :meth:`get_signing_key` instead.
+        """
+        warnings.warn(_JWKS_CLIENT_DEPRECATION.format("JWKSEndpointTrust.jwks_client"), DeprecationWarning, stacklevel=2)
+        return _get_jwks_client(self.jwks_url)
 
     def get_signing_key(self, untrusted_token: tokens.UntrustedToken) -> keys.FacadePublicKey:
-        jwk = self.jwks_client.get_signing_key_from_jwt(untrusted_token.token)
+        """
+        Get the key from this endpoint's key set whose ID matches the token's ``kid`` header.
+
+        :raises PyJWKClientError: if no cached signing key matches.
+        """
+        jwk = jwks.get_signing_key(self.jwks_url, untrusted_token.get_claimed_key_id())
         return keys.PublicKey.from_cryptography_pubkey(jwk.key)
 
     def update_last_used_datetime(self) -> None:

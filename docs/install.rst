@@ -44,3 +44,13 @@ Create the new models in your DB.
 This creates a new relationship on the ``django.contrib.auth.models.User`` model. ``User`` now contains a one-to-many relationship to ``asymmetric_jwt_auth.models.PublicKey``. Any number of public key’s can be added to a user using the Django Admin site.
 
 The middleware activated above will watch for incoming requests with a JWT authorization header and will attempt to authenticate it using saved public keys.
+
+Keys from JWKS endpoints
+------------------------
+
+Key sets fetched from a user's JWKS endpoint are kept in Django's ``default`` cache and refreshed by a background thread, so requests don't wait on the endpoint. A request only fetches a key set itself when nothing is cached for that URL yet. Two things follow from this:
+
+- Use a cache backend shared by every process, such as Redis or Memcached. With a per-process cache, each process fetches each key set the first time it's used.
+- The server must let applications run background threads. Under uWSGI, pass ``--enable-threads``. Otherwise refreshes can stall, and a key set that goes ``JWKS_CACHE_MAX_AGE`` without a refresh stops being trusted.
+
+A token signed with a key that its endpoint has only just published can be rejected until the next refresh, usually a moment later. The ``JWKS_CACHE_TTL``, ``JWKS_CACHE_MAX_AGE``, ``JWKS_REFRESH_COOLDOWN``, and ``JWKS_FETCH_TIMEOUT`` settings control the timing.

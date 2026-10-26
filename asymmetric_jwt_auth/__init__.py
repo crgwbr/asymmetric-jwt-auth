@@ -22,6 +22,15 @@ default_settings = {
     "SIGNING_PUBLIC_KEYS": [],
     #: Cache TTL for the JWKS key view
     "JWKS_VIEW_TTL": (60 * 5),
+    #: Seconds before a key set fetched from a trusted JWKS endpoint is refreshed in the background.
+    "JWKS_CACHE_TTL": (60 * 5),
+    #: Seconds a key set keeps being trusted when its JWKS endpoint can't be refreshed.
+    "JWKS_CACHE_MAX_AGE": (60 * 60),
+    #: Minimum seconds between refreshes of one JWKS endpoint, e.g. after a token names an unknown key ID.
+    "JWKS_REFRESH_COOLDOWN": 30,
+    #: Seconds to wait on a JWKS endpoint. Keep it well below ``JWKS_REFRESH_COOLDOWN``, since one slow endpoint holds
+    #: up every other refresh queued in the same process.
+    "JWKS_FETCH_TIMEOUT": 5,
 }
 
 

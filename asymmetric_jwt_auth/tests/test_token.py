@@ -70,6 +70,33 @@ class UntrustedTokenTest(TestCase):
     def test_get_claimed_username(self):
         self.assertEqual(self.untrusted_token.get_claimed_username(), self.username)
 
+    def test_get_claimed_key_id(self):
+        self.assertEqual(self.untrusted_token.get_claimed_key_id(), self.privkey.public_key.fingerprint)
+        no_kid_jwt = jwt.encode({"username": self.username}, key=self.privkey.as_pem, algorithm="EdDSA")
+        self.assertIsNone(tokens.UntrustedToken(no_kid_jwt).get_claimed_key_id())
+        self.assertIsNone(tokens.UntrustedToken("not-a-jwt").get_claimed_key_id())
+
+    def test_has_supported_algorithm(self):
+        self.assertTrue(self.untrusted_token.has_supported_algorithm())
+        rsa_key = keys.RSAPrivateKey.generate().as_pem
+        for alg in keys.RSA_ALGORITHMS:
+            with self.subTest(alg=alg):
+                rsa_jwt = jwt.encode({"username": self.username}, key=rsa_key, algorithm=alg)
+                self.assertTrue(tokens.UntrustedToken(rsa_jwt).has_supported_algorithm())
+
+    def test_has_supported_algorithm_rejects_unsupported_or_malformed(self):
+        hmac_jwt = jwt.encode({"username": self.username}, key="x" * 32, algorithm="HS256")
+        unsigned_jwt = jwt.encode({"username": self.username}, key=None, algorithm="none")
+        bad_segments = self.jwt_value.split(".")[0] + ".not-a-jwt"
+        for value in (hmac_jwt, unsigned_jwt, bad_segments, "not-a-jwt", ""):
+            with self.subTest(value=value):
+                self.assertFalse(tokens.UntrustedToken(value).has_supported_algorithm())
+
+    def test_has_supported_algorithm_custom_list(self):
+        hmac_jwt = jwt.encode({"username": self.username}, key="x" * 32, algorithm="HS256")
+        self.assertTrue(tokens.UntrustedToken(hmac_jwt).has_supported_algorithm(["HS256"]))
+        self.assertFalse(self.untrusted_token.has_supported_algorithm(["HS256"]))
+
     def test_verify_valid(self):
         token = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsInstance(token, tokens.Token)

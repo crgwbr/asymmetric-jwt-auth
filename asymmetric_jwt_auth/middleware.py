@@ -19,6 +19,16 @@ class JWTAuthMiddleware:
         self.nonce_backend = get_nonce_backend()
         self.user_repo = get_user_repository()
         self.key_repos = get_public_key_repositories()
+        self.supported_algorithms = self._get_supported_algorithms()
+
+    def _get_supported_algorithms(self) -> frozenset[str] | None:
+        """
+        The algorithms some configured key repository can verify, or ``None`` if any repository may verify any.
+        """
+        algorithm_sets: list[frozenset[str] | None] = [getattr(repo, "supported_algorithms", None) for repo in self.key_repos]
+        if any(algorithms is None for algorithms in algorithm_sets):
+            return None
+        return frozenset[str]().union(*(algorithms for algorithms in algorithm_sets if algorithms is not None))
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         # Attempt to authorize the request
@@ -62,8 +72,16 @@ class JWTAuthMiddleware:
             )
             return request
 
-        # Get the (unvalidated!) username that the request is claiming to be
         untrusted_token = UntrustedToken(header_data)
+        # Not needed for equal timing (the decoy checks cover that), but it skips the DB for junk tokens
+        if self.supported_algorithms is not None and not untrusted_token.has_supported_algorithm(self.supported_algorithms):
+            logger.debug(
+                "Exiting JWTAuthMiddleware because JWT is malformed or does not use a supported signing algorithm. jwt:[%s]",
+                header_data,
+            )
+            return request
+
+        # Get the (unvalidated!) username that the request is claiming to be
         username = untrusted_token.get_claimed_username()
         if not username:
             logger.debug(
@@ -75,6 +93,11 @@ class JWTAuthMiddleware:
         # Get the user model
         user = self.user_repo.get_user(username=username)
         if not user:
+            # Do the key lookups a real user would get, so the response time doesn't reveal whether the user exists
+            for repo in self.key_repos:
+                simulate = getattr(repo, "simulate_attempt_to_verify_token", None)
+                if simulate is not None:
+                    simulate(username, untrusted_token)
             logger.debug(
                 "Exiting JWTAuthMiddleware because claimed username [%s] did not match any known users.",
                 username,

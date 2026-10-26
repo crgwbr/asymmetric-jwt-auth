@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
+from jwt import PyJWKClient
 import jwt
 
 from .. import keys, models, tokens
@@ -105,3 +106,10 @@ class JWKSEndpointTrustTest(TestCase):
                 "gty": "client-credentials",
             },
         )
+
+    def test_jwks_client_is_deprecated(self) -> None:
+        with self.assertWarns(DeprecationWarning):
+            client = self.jwks.jwks_client
+        self.assertIsInstance(client, PyJWKClient)
+        with self.assertWarns(DeprecationWarning):
+            self.assertIs(models.get_jwks_client(self.jwks.jwks_url), client)
