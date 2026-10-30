@@ -1,3 +1,14 @@
+## v1.4.0 (2026-10-30)
+
+### Feat
+
+- test Django 6.0 and 6.1, drop Django 4.2 and 5.1
+- support Python 3.15 and drop Python 3.11
+
+### Refactor
+
+- adopt Python 3.12 syntax
+
 ## v1.3.0 (2026-10-26)
 
 ### Feat
