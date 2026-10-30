@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Union
 import hashlib
 import os
 
@@ -14,15 +14,6 @@ from .utils import long_to_base64
 FacadePrivateKey = Union["RSAPrivateKey", "Ed25519PrivateKey"]
 FacadePublicKey = Union["RSAPublicKey", "Ed25519PublicKey"]
 
-PrivateKeyType = TypeVar(
-    "PrivateKeyType",
-    bound=rsa.RSAPrivateKey | ed25519.Ed25519PrivateKey,
-)
-PublicKeyType = TypeVar(
-    "PublicKeyType",
-    bound=rsa.RSAPublicKey | ed25519.Ed25519PublicKey,
-)
-
 #: JWT signing algorithms accepted for RSA keys, most preferred first
 RSA_ALGORITHMS = ("RS512", "RS384", "RS256")
 #: JWT signing algorithms accepted for Ed25519 keys
@@ -31,7 +22,7 @@ ED25519_ALGORITHMS = ("EdDSA",)
 SUPPORTED_ALGORITHMS = frozenset(RSA_ALGORITHMS + ED25519_ALGORITHMS)
 
 
-class PublicKey(Generic[PublicKeyType]):
+class PublicKey[PublicKeyType: rsa.RSAPublicKey | ed25519.Ed25519PublicKey]:
     """Represents a public key"""
 
     _key: PublicKeyType
@@ -147,7 +138,7 @@ class Ed25519PublicKey(PublicKey[ed25519.Ed25519PublicKey]):
         return list(ED25519_ALGORITHMS)
 
 
-class PrivateKey(Generic[PrivateKeyType]):
+class PrivateKey[PrivateKeyType: rsa.RSAPrivateKey | ed25519.Ed25519PrivateKey]:
     """Represents a private key"""
 
     _key: PrivateKeyType
