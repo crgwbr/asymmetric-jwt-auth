@@ -129,8 +129,8 @@ dev = [
     { name = "ruff", specifier = ">=0.17.3" },
     { name = "sphinx", specifier = ">=8.2.3,<9" },
     { name = "sphinx-rtd-theme", specifier = ">=3.1.0,<4" },
-    { name = "tox", specifier = ">=4.67.1" },
-    { name = "tox-uv", specifier = ">=1.37.0" },
+    { name = "tox", specifier = ">=4.67.2" },
+    { name = "tox-uv", specifier = ">=1.37.1" },
 ]
 
 [[package]]
@@ -1363,7 +1363,7 @@ wheels = [
 
 [[package]]
 name = "tox"
-version = "4.67.2"
+version = "4.67.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cachetools" },
@@ -1378,34 +1378,34 @@ dependencies = [
     { name = "typing-extensions", marker = "python_full_version < '3.13'" },
     { name = "virtualenv" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/2c/cc/590d979d858960bad441d1b3b6d5f898806132ff2b25a6cbdcbfadb0ceea/tox-4.67.2.tar.gz", hash = "sha256:be272aa5b9503fc084c82da242df124835e23cb86fc337f8e33804f011fc3ca5", size = 347457, upload-time = "2026-10-27T08:19:49.474Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/64/bf/c0eb714b28d21c225eec423efc4243d806de64b5678fec6a15e03a361c09/tox-4.67.4.tar.gz", hash = "sha256:6f97945d3ca1c204337aeecd858b178b30fc5cf9d0b0c15aacea12d1c5eb0946", size = 351271, upload-time = "2026-10-28T06:33:30.12Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/75/0996c8b8a32bfb2fad0241a101b68097d1a99853ab1310c313223b4ee33a/tox-4.67.2-py3-none-any.whl", hash = "sha256:429c249603ef9c99fec3871ac2d9e05d00cc7c02c110c099a2fe942bcb90fb8a", size = 238079, upload-time = "2026-10-27T08:19:47.799Z" },
+    { url = "https://files.pythonhosted.org/packages/27/0e/1a4927a8b5b6bc34a6dec3020094daca52605f2050ecd921cfe36a37c480/tox-4.67.4-py3-none-any.whl", hash = "sha256:e1be08d3dbeb44c7a87ec6b4f0be840b0a0db375013c3c801e5bb428c5607361", size = 239419, upload-time = "2026-10-28T06:33:28.487Z" },
 ]
 
 [[package]]
 name = "tox-uv"
-version = "1.37.1"
+version = "1.37.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tox-uv-bare" },
     { name = "uv" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/c1/486b0941c233783db26145e9da0fcaa62b08e83672cab841b8875cdda5b9/tox_uv-1.37.1-py3-none-any.whl", hash = "sha256:69b2dd3df1a052abe5e240c8c7eb1fa965597b3a48a28aad04b2476a594b2446", size = 7429, upload-time = "2026-10-27T07:02:52.364Z" },
+    { url = "https://files.pythonhosted.org/packages/e3/22/523c370ab0422f4149bf6e8f664c92ca44f6b0b5ae7aeb916a292f2c0b23/tox_uv-1.37.2-py3-none-any.whl", hash = "sha256:88fcd095df0527b98dee15df8aa7c6fe8880785781fa5a0146619ee9fc685370", size = 7741, upload-time = "2026-10-27T18:53:24.263Z" },
 ]
 
 [[package]]
 name = "tox-uv-bare"
-version = "1.37.1"
+version = "1.37.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
     { name = "tox" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/49/ce/148425358d9cdb638fe8edc5f4d3173cfe2299ea6c5b855f1b91075d2061/tox_uv_bare-1.37.1.tar.gz", hash = "sha256:2850db0f27eb9b0c55486698a5f5850e71ecff1d9b6bf4005ce73933d13a235e", size = 33488, upload-time = "2026-10-27T07:02:55.112Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/35/f01dda041190c389737afccce0585a802f66b6a925999df29398d9e4d559/tox_uv_bare-1.37.2.tar.gz", hash = "sha256:7dc7a6bb6753bc958868adceed5bd72c37e51b6dbf346f386a79b8efcd751540", size = 33779, upload-time = "2026-10-27T18:53:27.149Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/46/72/7e792da774d97ac5d9881e0610b109690380286487ecd97c8f1c37af0111/tox_uv_bare-1.37.1-py3-none-any.whl", hash = "sha256:377610aee5d1d4aabb1afab72247318fd377d7188919aa38d9e0fbecb14206ab", size = 22373, upload-time = "2026-10-27T07:02:53.721Z" },
+    { url = "https://files.pythonhosted.org/packages/4e/40/64222c3d0281281dd69d2db417312dce7542d840d643af2379c1662fa456/tox_uv_bare-1.37.2-py3-none-any.whl", hash = "sha256:b7a1ae5884f4c8a949e91b2552517a23e830c969a2f61a65ab29fb0b142ae990", size = 22686, upload-time = "2026-10-27T18:53:25.519Z" },
 ]
 
 [[package]]
