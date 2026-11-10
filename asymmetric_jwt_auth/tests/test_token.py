@@ -97,6 +97,21 @@ class UntrustedTokenTest(TestCase):
         self.assertTrue(tokens.UntrustedToken(hmac_jwt).has_supported_algorithm(["HS256"]))
         self.assertFalse(self.untrusted_token.has_supported_algorithm(["HS256"]))
 
+    def test_get_claimed_username_malformed_token(self) -> None:
+        header, payload, signature = self.jwt_value.split(".")
+        deeply_nested = jwt.utils.base64url_encode(b"[" * 100_000 + b"]" * 100_000).decode()
+        malformed_values = (
+            "foobar",  # Not enough segments
+            f"{header}.{payload}.a",  # Invalid crypto padding
+            f"a.{payload}.{signature}",  # Invalid header padding
+            f"{header}.bm9wZQ.{signature}",  # Invalid payload string
+            f"{header}.WzFd.{signature}",  # Payload isn't a JSON object
+            f"{deeply_nested}.{payload}.{signature}",  # Header exceeds max recursion depth
+        )
+        for value in malformed_values:
+            with self.subTest(value=value):
+                self.assertIsNone(tokens.UntrustedToken(value).get_claimed_username())
+
     def test_verify_valid(self):
         token = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsInstance(token, tokens.Token)
