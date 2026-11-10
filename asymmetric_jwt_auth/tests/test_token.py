@@ -134,6 +134,34 @@ class UntrustedTokenTest(TestCase):
             token = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsNone(token)
 
+    def _sign_with_time(self, claimed_time: object) -> tokens.UntrustedToken:
+        jwt_value = jwt.encode(
+            payload={
+                "username": self.username,
+                "time": claimed_time,
+                "nonce": "yVJ0MVWhqPQ",
+            },
+            key=self.privkey.as_pem,
+            algorithm=self.privkey.public_key.allowed_algorithms[0],
+        )
+        return tokens.UntrustedToken(jwt_value)
+
+    def test_time_not_a_number(self) -> None:
+        untrusted_token = self._sign_with_time(str(self.token.timestamp))
+        token = untrusted_token.verify(self.privkey.public_key)
+        self.assertIsNone(token)
+
+    def test_time_nan(self) -> None:
+        untrusted_token = self._sign_with_time(float("nan"))
+        token = untrusted_token.verify(self.privkey.public_key)
+        self.assertIsNone(token)
+
+    def test_time_float(self) -> None:
+        untrusted_token = self._sign_with_time(self.token.timestamp + 0.9)
+        token = untrusted_token.verify(self.privkey.public_key)
+        self.assertIsInstance(token, tokens.Token)
+        self.assertEqual(token.timestamp, self.token.timestamp)
+
     def test_nonce_already_used(self):
         token1 = self.untrusted_token.verify(self.privkey.public_key)
         self.assertIsInstance(token1, tokens.Token)
